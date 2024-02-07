@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Registration } from "../types/Registration"
+import validator from 'validator'
 
 const SignupForm = () => {
 
@@ -18,6 +19,31 @@ const SignupForm = () => {
         })
     }
 
+    const validateRegistration = (): boolean => {
+        if(
+            validator.isEmpty(registration.firstName) || 
+            validator.isEmpty(registration.lastName) || 
+            validator.isEmpty(registration.email) || 
+            validator.isEmpty(registration.password) ||
+            validator.isEmpty(registration.confirmPassword)) {
+                return false
+        }
+
+        if(!validator.isEmail(registration.email)) {
+            return false
+        }
+
+        if(registration.password !== registration.confirmPassword) {
+            return false
+        }
+        return true
+    }
+
+    const onSignupClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        validateRegistration()
+    }
+
     return (
         <form className="flex flex-col p-4 gap-2" action="">
             <h1 className="text-3xl font-bold my-2">Sign Up</h1>
@@ -31,7 +57,7 @@ const SignupForm = () => {
             <input id="password" name="password" className="border p-1" type="password" onChange={onInputChange} placeholder="******" />
             <label htmlFor="confirmPassword" className="font-bold">Confirm Password</label>
             <input id="confirmPassword" name="confirmPassword" className="border p-1" type="password" onChange={onInputChange} placeholder="******" />
-            <button className="font-bold rounded-md bg-green-200 px-1 py-2 my-2">Sign Up</button>
+            <button className="font-bold rounded-md bg-green-200 px-1 py-2 my-2" onClick={onSignupClick}>Sign Up</button>
         </form>
     )
 }
