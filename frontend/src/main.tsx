@@ -5,6 +5,7 @@ import './index.css'
 import { initializeApp } from 'firebase/app'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Login from './pages/Login.tsx'
+import Signup from './pages/Signup.tsx'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />
+  },
+  {
+    path: '/signup',
+    element: <Signup />
   }
 ])
 
