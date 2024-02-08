@@ -12,6 +12,7 @@ const SignupForm = () => {
         password: '',
         confirmPassword: ''
     })
+    const [loading, setLoading] = useState(false)
     const auth = getAuth()
 
     // handle any input change in form and update registration object
@@ -45,7 +46,7 @@ const SignupForm = () => {
     }
 
     // validate all fields in registration object
-    const validateRegistration = (): boolean => {
+    const validateRegistration = (registration: Registration): boolean => {
         if(
             validator.isEmpty(registration.firstName) || 
             validator.isEmpty(registration.lastName) || 
@@ -68,7 +69,8 @@ const SignupForm = () => {
     // handle sign up click
     const onSignupClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        if(validateRegistration()) {
+        setLoading(true)
+        if(validateRegistration(registration)) {
             const user = await signup(registration)
             await sendVerificationEmail(user)
         }
@@ -87,7 +89,7 @@ const SignupForm = () => {
             <input id="password" name="password" className="border p-1" type="password" onChange={onInputChange} placeholder="******" />
             <label htmlFor="confirmPassword" className="font-bold">Confirm Password</label>
             <input id="confirmPassword" name="confirmPassword" className="border p-1" type="password" onChange={onInputChange} placeholder="******" />
-            <button className="font-bold rounded-md bg-green-200 shadow-md px-1 py-2 my-2" onClick={onSignupClick}>Sign Up</button>
+            <button className="font-bold rounded-md bg-green-200 shadow-md px-1 py-2 my-2" disabled={loading} onClick={onSignupClick}>{loading ? 'Loading...' : 'Sign Up'}</button>
         </form>
     )
 }
