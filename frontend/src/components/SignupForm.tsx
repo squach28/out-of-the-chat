@@ -14,6 +14,7 @@ const SignupForm = () => {
     })
     const auth = getAuth()
 
+    // handle any input change in form and update registration object
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setRegistration({
             ...registration,
@@ -21,12 +22,16 @@ const SignupForm = () => {
         })
     }
 
+    // use firebase auth to create a user with email and password
+    // after account creation, update user's display name
+    // returns the created user
     const signup = async (registration: Registration) => {
         const userCredential = await createUserWithEmailAndPassword(auth, registration.email, registration.password)
         await updateUserDisplayName(userCredential.user, `${registration.firstName} ${registration.lastName}`)
         return userCredential.user
     }
 
+    // use firebase auth to update a user's display name
     const updateUserDisplayName = async (user: User, name: string) => {
         await updateProfile(user, {
             displayName: name
@@ -34,31 +39,33 @@ const SignupForm = () => {
         return
     }
 
+    // send a verification email to the user
     const sendVerificationEmail = async (user: User) => {
-        const verificationEmail = await sendEmailVerification(user)
-        console.log(verificationEmail)
+        await sendEmailVerification(user)
     }
 
+    // validate all fields in registration object
     const validateRegistration = (): boolean => {
         if(
             validator.isEmpty(registration.firstName) || 
             validator.isEmpty(registration.lastName) || 
             validator.isEmpty(registration.email) || 
             validator.isEmpty(registration.password) ||
-            validator.isEmpty(registration.confirmPassword)) {
+            validator.isEmpty(registration.confirmPassword)) { // check for empty fields
                 return false
         }
 
-        if(!validator.isEmail(registration.email)) {
+        if(!validator.isEmail(registration.email)) { // check for invalid email
             return false
         }
 
-        if(registration.password !== registration.confirmPassword) {
+        if(registration.password !== registration.confirmPassword) { // check for mismatching passwords
             return false
         }
         return true
     }
 
+    // handle sign up click
     const onSignupClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         if(validateRegistration()) {
