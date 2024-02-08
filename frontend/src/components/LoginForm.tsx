@@ -2,6 +2,8 @@ import { useState } from "react"
 import { LoginCredential } from "../types/LoginCredential"
 import validator from "validator"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
+import { useNavigate } from "react-router-dom"
+
 
 const LoginForm = () => {
     const [loginCredential, setLoginCredential] = useState<LoginCredential>({
@@ -10,6 +12,7 @@ const LoginForm = () => {
     })
     const [loading, setLoading] = useState<boolean>(false)
     const auth = getAuth()
+    const navigate = useNavigate()
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLoginCredential({
@@ -45,7 +48,10 @@ const LoginForm = () => {
                 const user = await login(loginCredential)
                 if(user === null) {
                     console.log('wrong password')
+                    return 
                 }
+                navigate('/', { replace: true })
+
             }
         } catch(e) {
             console.log(e)
