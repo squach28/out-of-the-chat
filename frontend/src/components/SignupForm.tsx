@@ -27,8 +27,8 @@ const SignupForm = () => {
         }
 
     })
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState('')
+    const [loading, setLoading] = useState<boolean>(false)
+    const [error, setError] = useState<string>('')
     const auth = getAuth()
     const navigate = useNavigate()
 
@@ -65,8 +65,6 @@ const SignupForm = () => {
     const onInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
         const inputName = e.target.name
         const inputValue = e.target.value
-        console.log(inputValue)
-        console.log(validator.isEmpty(inputValue))
         if(validator.isEmpty(inputValue)) {
             setRegistration({
                 ...registration,

@@ -1,4 +1,11 @@
 export type LoginCredential = {
-    email: string 
-    password: string
+    data: {
+        email: string 
+        password: string
+    },
+    errors: {
+        email: string 
+        password: string 
+    }
+
 }

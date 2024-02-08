@@ -13,6 +13,9 @@ export default {
         "button": {
           "light": "#6246ea"
         },
+        "button-text": {
+          "light": "#fffffe"
+        },
         "headline": {
           "light": "#2b2c34"
         }
