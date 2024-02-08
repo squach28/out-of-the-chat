@@ -6,6 +6,14 @@ import { FirebaseError } from "firebase/app"
 import { generateErrorMessage } from "../utils/ErrorMessageGenerator"
 import { useNavigate } from "react-router-dom"
 
+type SignUpErrors = {
+    firstName: string 
+    lastName: string
+    email: string 
+    password: string 
+    confirmPassword: string 
+}
+
 const SignupForm = () => {
 
     const [registration, setRegistration] = useState<Registration>({
@@ -60,6 +68,7 @@ const SignupForm = () => {
     }
 
     const onInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+
         if(validator.isEmpty(e.target.value)) {
             setRegistration({
                 ...registration,
@@ -132,18 +141,32 @@ const SignupForm = () => {
     return (
         <form className="flex flex-col p-4 gap-2" action="">
             <h1 className="text-3xl font-bold my-2">Sign Up</h1>
-            <label htmlFor="firstName" className="font-bold">First Name <span className="text-red-400">*</span></label>
+            <div className="flex flex-row gap-3">
+                <label htmlFor="firstName" className="font-bold">First Name <span className="text-red-400">*</span></label>
+                {registration.errors.firstName ? <p className="text-red-400 font-bold">Field is required</p> : null}
+            </div>
             <input id="firstName" name="firstName" className={`border p-1 ${registration.errors.firstName === '' ? 'border-gray-200' : 'border-red-400'}`} type="text" onBlur={onInputBlur} onChange={onInputChange} placeholder="John" />
-            <label htmlFor="lastName" className="font-bold">Last Name <span className="text-red-400">*</span></label>
+            <div className="flex flex-row gap-3">
+                <label htmlFor="lastName" className="font-bold">Last Name <span className="text-red-400">*</span></label>
+                {registration.errors.lastName ? <p className="text-red-400 font-bold">Field is required</p> : null}
+            </div>
             <input id="lastName" name="lastName" className={`border p-1 ${registration.errors.lastName === '' ? 'border-gray-200' : 'border-red-400'}`} type="text" onBlur={onInputBlur} onChange={onInputChange} placeholder="Doe" />
-            <label htmlFor="email" className="font-bold">Email <span className="text-red-400">*</span></label>
+            <div className="flex flex-row gap-3">
+                <label htmlFor="email" className="font-bold">Email <span className="text-red-400">*</span></label>
+                {registration.errors.email ? <p className="text-red-400 font-bold">Field is required</p> : null}
+            </div>
             <input id="email" name="email" className={`border p-1 ${registration.errors.email === '' ? 'border-gray-200' : 'border-red-400'}`} type="email" onBlur={onInputBlur} onChange={onInputChange} placeholder="johndoe@gmail.com" />
-            <label htmlFor="password" className="font-bold">Password <span className="text-red-400">*</span></label>
+            <div className="flex flex-row gap-3">
+                <label htmlFor="password" className="font-bold">Password <span className="text-red-400">*</span></label>
+                {registration.errors.password ? <p className="text-red-400 font-bold">Field is required</p> : null}
+            </div>
             <input id="password" name="password" className={`border p-1 ${registration.errors.password === '' ? 'border-gray-200' : 'border-red-400'}`} type="password" onBlur={onInputBlur} onChange={onInputChange} placeholder="6 characters or longer" />
-            <label htmlFor="confirmPassword" className="font-bold">Confirm Password <span className="text-red-400">*</span></label>
+            <div className="flex flex-row gap-3">
+                <label htmlFor="confirmPassword" className="font-bold">Confirm Password <span className="text-red-400">*</span></label>
+                {registration.errors.confirmPassword ? <p className="text-red-400 font-bold">Field is required</p> : null}
+            </div>
             <input id="confirmPassword" name="confirmPassword" className={`border p-1 ${registration.errors.confirmPassword === '' ? 'border-gray-200' : 'border-red-400'}`} type="password" onBlur={onInputBlur} onChange={onInputChange} placeholder="Must match password" />
-            {}
-            <button className="font-bold rounded-md bg-green-200 shadow-md px-1 py-2 my-2" disabled={loading} onClick={onSignupClick}>{loading ? 'Loading...' : 'Sign Up'}</button>
+            <button className="font-bold rounded-md bg-button-light text-white shadow-md px-1 py-2 my-2" disabled={loading} onClick={onSignupClick}>{loading ? 'Loading...' : 'Sign Up'}</button>
         </form>
     )
 }

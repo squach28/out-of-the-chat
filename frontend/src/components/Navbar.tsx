@@ -17,7 +17,7 @@ const Navbar = () => {
         })
     }, [auth])
     return (
-        <nav className="w-full bg-green-200 p-2">
+        <nav className="w-full bg-[#d1d1e9] text-headline-light p-3">
             <ul className="flex justify-between">
                 <li className="font-bold"><Link to="/">Out of the Chat</Link></li>
                 {pathsToHideLogin.includes(pathName) ? null : <li>{ user ? <p>{user.displayName}</p> : <Link to="/login">Login</Link>}</li>}
