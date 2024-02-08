@@ -21,6 +21,17 @@ const LoginForm = () => {
         })
     }
 
+    const isUserVerified = async (email: string): Promise<boolean> => {
+        try {
+            const verified = await fetch(`${import.meta.env.VITE_API_URL}/auth/userVerified?email=${email}`)
+            const data = await verified.json()
+            return data.verified
+        } catch(e) {
+            console.log(e)
+            return false
+        }
+    }
+
     const login = async (loginCredential: LoginCredential) => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, loginCredential.email, loginCredential.password)
@@ -45,12 +56,17 @@ const LoginForm = () => {
         setLoading(true)
         try {
             if(validateLogin(loginCredential)) {
-                const user = await login(loginCredential)
-                if(user === null) {
-                    console.log('wrong password')
-                    return 
+                const verified = await isUserVerified(loginCredential.email)
+                if(verified) {
+                    const user = await login(loginCredential)
+                    if(user === null) {
+                        alert('Wrong password')
+                    } else {
+                        navigate('/', { replace: true })
+                    }
+                } else {
+                    alert('Email not verified')
                 }
-                navigate('/', { replace: true })
 
             }
         } catch(e) {

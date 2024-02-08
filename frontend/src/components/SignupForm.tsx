@@ -4,6 +4,7 @@ import validator from 'validator'
 import { User, createUserWithEmailAndPassword, getAuth, sendEmailVerification, updateProfile } from "firebase/auth"
 import { FirebaseError } from "firebase/app"
 import { generateErrorMessage } from "../utils/ErrorMessageGenerator"
+import { useNavigate } from "react-router-dom"
 
 const SignupForm = () => {
 
@@ -26,6 +27,7 @@ const SignupForm = () => {
     })
     const [loading, setLoading] = useState(false)
     const auth = getAuth()
+    const navigate = useNavigate()
 
     // handle any input change in form and update registration object
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,6 +102,7 @@ const SignupForm = () => {
                     return
                 } else {
                     await sendVerificationEmail(user as User)
+                    navigate('/', { replace: true})
                     return
                 }
             }

@@ -17,7 +17,7 @@ const Navbar = () => {
         <nav className="w-full bg-green-200 p-2">
             <ul className="flex justify-between">
                 <li className="font-bold"><Link to="/">Out of the Chat</Link></li>
-                <li>{ user ? <p>{user.displayName}</p> :<Link to="/login">Login</Link>}</li>
+                <li>{ user ? <p>{user.displayName}</p> : <Link to="/login">Login</Link>}</li>
             </ul>
         </nav>
     )
