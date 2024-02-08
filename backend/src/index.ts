@@ -1,12 +1,21 @@
 import express from 'express'
+import admin from 'firebase-admin'
+import type { ServiceAccount } from 'firebase-admin'
+import serviceAccount from '../config/serviceAccountKey.json'
+import authRouter from './routes/authRoutes'
 
-const PORT = process.env.PORT || 4000
+const PORT = process.env.PORT ?? 4000
 const app = express()
 
+app.use('/auth', authRouter)
+
 app.get('/', (req, res) => {
-    res.send('hello')
+  res.send('hello')
 })
 
 app.listen(PORT, () => {
-    console.log(`Listening on ${PORT}`)
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount as ServiceAccount)
+  })
+  console.log(`Listening on ${PORT}`)
 })

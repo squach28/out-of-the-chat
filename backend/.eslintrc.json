@@ -9,5 +9,10 @@
         "sourceType": "module"
     },
     "rules": {
-    }
+    },
+    "overrides": [
+        {
+            "files": [ "src/**/*.ts" ]
+        }
+    ]
 }
