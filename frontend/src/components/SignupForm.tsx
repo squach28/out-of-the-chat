@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Registration } from "../types/Registration"
 import validator from 'validator'
+import { User, createUserWithEmailAndPassword, getAuth, sendEmailVerification, updateProfile } from "firebase/auth"
 
 const SignupForm = () => {
 
@@ -11,12 +12,31 @@ const SignupForm = () => {
         password: '',
         confirmPassword: ''
     })
+    const auth = getAuth()
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setRegistration({
             ...registration,
             [e.target.name]: e.target.value
         })
+    }
+
+    const signup = async (registration: Registration) => {
+        const userCredential = await createUserWithEmailAndPassword(auth, registration.email, registration.password)
+        await updateUserDisplayName(userCredential.user, `${registration.firstName} ${registration.lastName}`)
+        return userCredential.user
+    }
+
+    const updateUserDisplayName = async (user: User, name: string) => {
+        await updateProfile(user, {
+            displayName: name
+        })
+        return
+    }
+
+    const sendVerificationEmail = async (user: User) => {
+        const verificationEmail = await sendEmailVerification(user)
+        console.log(verificationEmail)
     }
 
     const validateRegistration = (): boolean => {
@@ -39,9 +59,12 @@ const SignupForm = () => {
         return true
     }
 
-    const onSignupClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onSignupClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        validateRegistration()
+        if(validateRegistration()) {
+            const user = await signup(registration)
+            await sendVerificationEmail(user)
+        }
     }
 
     return (
@@ -57,7 +80,7 @@ const SignupForm = () => {
             <input id="password" name="password" className="border p-1" type="password" onChange={onInputChange} placeholder="******" />
             <label htmlFor="confirmPassword" className="font-bold">Confirm Password</label>
             <input id="confirmPassword" name="confirmPassword" className="border p-1" type="password" onChange={onInputChange} placeholder="******" />
-            <button className="font-bold rounded-md bg-green-200 px-1 py-2 my-2" onClick={onSignupClick}>Sign Up</button>
+            <button className="font-bold rounded-md bg-green-200 shadow-md px-1 py-2 my-2" onClick={onSignupClick}>Sign Up</button>
         </form>
     )
 }
