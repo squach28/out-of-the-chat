@@ -6,13 +6,7 @@ import { FirebaseError } from "firebase/app"
 import { generateErrorMessage } from "../utils/ErrorMessageGenerator"
 import { useNavigate } from "react-router-dom"
 
-type SignUpErrors = {
-    firstName: string 
-    lastName: string
-    email: string 
-    password: string 
-    confirmPassword: string 
-}
+const MINIMUM_PASSWORD_LENGTH = 6
 
 const SignupForm = () => {
 
@@ -34,6 +28,7 @@ const SignupForm = () => {
 
     })
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
     const auth = getAuth()
     const navigate = useNavigate()
 
@@ -68,13 +63,40 @@ const SignupForm = () => {
     }
 
     const onInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-
-        if(validator.isEmpty(e.target.value)) {
+        const inputName = e.target.name
+        const inputValue = e.target.value
+        console.log(inputValue)
+        console.log(validator.isEmpty(inputValue))
+        if(validator.isEmpty(inputValue)) {
             setRegistration({
                 ...registration,
                 errors: {
                     ...registration.errors,
-                    [e.target.name]: `Field is required`
+                    [inputName]: `Field is required`
+                }
+            })
+        } else if(inputName === 'email' && !validator.isEmail(inputValue)) {
+            setRegistration({
+                ...registration,
+                errors: {
+                    ...registration.errors,
+                    [inputName]: `Email is not valid`
+                }
+            })
+        } else if(inputName === 'password' && inputValue.length < MINIMUM_PASSWORD_LENGTH) {
+            setRegistration({
+                ...registration,
+                errors: {
+                    ...registration.errors,
+                    [inputName]: `Must be 6 chars or longer`
+                }
+            })
+        } else if(inputName === 'confirmPassword' && registration.data.password !== registration.data.confirmPassword) {
+            setRegistration({
+                ...registration,
+                errors: {
+                    ...registration.errors,
+                    [inputName]: `Passwords do not match`
                 }
             })
         }
@@ -118,11 +140,12 @@ const SignupForm = () => {
     const onSignupClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         setLoading(true)
+        setError('')
         try {
             if(validateRegistration(registration)) {
                 const user = await signup(registration)
                 if(user instanceof FirebaseError) {
-                    console.log(generateErrorMessage(user.code))
+                    setError(generateErrorMessage(user.code))
                     return
                 } else {
                     await sendVerificationEmail(user as User)
@@ -143,30 +166,31 @@ const SignupForm = () => {
             <h1 className="text-3xl font-bold my-2">Sign Up</h1>
             <div className="flex flex-row gap-3">
                 <label htmlFor="firstName" className="font-bold">First Name <span className="text-red-400">*</span></label>
-                {registration.errors.firstName ? <p className="text-red-400 font-bold">Field is required</p> : null}
+                {registration.errors.firstName !== '' ? <p className="text-red-400 font-bold">{registration.errors.firstName}</p> : null}
             </div>
             <input id="firstName" name="firstName" className={`border p-1 ${registration.errors.firstName === '' ? 'border-gray-200' : 'border-red-400'}`} type="text" onBlur={onInputBlur} onChange={onInputChange} placeholder="John" />
             <div className="flex flex-row gap-3">
                 <label htmlFor="lastName" className="font-bold">Last Name <span className="text-red-400">*</span></label>
-                {registration.errors.lastName ? <p className="text-red-400 font-bold">Field is required</p> : null}
+                {registration.errors.lastName ? <p className="text-sm text-red-400 font-bold">{registration.errors.lastName}</p> : null}
             </div>
             <input id="lastName" name="lastName" className={`border p-1 ${registration.errors.lastName === '' ? 'border-gray-200' : 'border-red-400'}`} type="text" onBlur={onInputBlur} onChange={onInputChange} placeholder="Doe" />
             <div className="flex flex-row gap-3">
                 <label htmlFor="email" className="font-bold">Email <span className="text-red-400">*</span></label>
-                {registration.errors.email ? <p className="text-red-400 font-bold">Field is required</p> : null}
+                {registration.errors.email ? <p className="text-sm text-red-400 font-bold">{registration.errors.email}</p> : null}
             </div>
             <input id="email" name="email" className={`border p-1 ${registration.errors.email === '' ? 'border-gray-200' : 'border-red-400'}`} type="email" onBlur={onInputBlur} onChange={onInputChange} placeholder="johndoe@gmail.com" />
             <div className="flex flex-row gap-3">
                 <label htmlFor="password" className="font-bold">Password <span className="text-red-400">*</span></label>
-                {registration.errors.password ? <p className="text-red-400 font-bold">Field is required</p> : null}
+                {registration.errors.password ? <p className="text-sm text-red-400 font-bold">{registration.errors.password}</p> : null}
             </div>
             <input id="password" name="password" className={`border p-1 ${registration.errors.password === '' ? 'border-gray-200' : 'border-red-400'}`} type="password" onBlur={onInputBlur} onChange={onInputChange} placeholder="6 characters or longer" />
             <div className="flex flex-row gap-3">
                 <label htmlFor="confirmPassword" className="font-bold">Confirm Password <span className="text-red-400">*</span></label>
-                {registration.errors.confirmPassword ? <p className="text-red-400 font-bold">Field is required</p> : null}
+                {registration.errors.confirmPassword ? <p className="text-sm text-red-400 font-bold">{registration.errors.confirmPassword}</p> : null}
             </div>
             <input id="confirmPassword" name="confirmPassword" className={`border p-1 ${registration.errors.confirmPassword === '' ? 'border-gray-200' : 'border-red-400'}`} type="password" onBlur={onInputBlur} onChange={onInputChange} placeholder="Must match password" />
-            <button className="font-bold rounded-md bg-button-light text-white shadow-md px-1 py-2 my-2" disabled={loading} onClick={onSignupClick}>{loading ? 'Loading...' : 'Sign Up'}</button>
+            {error ? <p className="text-red-400">{error}</p> : null} 
+            <button className={`font-bold rounded-md bg-button-light text-white shadow-md px-1 py-2 my-2 ${!validateRegistration(registration) ? 'bg-gray-300' : 'bg-button-light'}`} disabled={loading || !validateRegistration(registration)} onClick={onSignupClick}>{loading ? 'Loading...' : 'Sign Up'}</button>
         </form>
     )
 }
