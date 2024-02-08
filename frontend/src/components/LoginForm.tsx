@@ -8,6 +8,7 @@ const LoginForm = () => {
         email: '',
         password: ''
     })
+    const [loading, setLoading] = useState<boolean>(false)
     const auth = getAuth()
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,7 +25,6 @@ const LoginForm = () => {
         } catch(e) {
             return null
         }
-
     }
 
     const validateLogin = (login: LoginCredential) => {
@@ -39,21 +39,29 @@ const LoginForm = () => {
 
     const onLoginClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        if(validateLogin(loginCredential)) {
-            const user = await login(loginCredential)
-            if(user === null) {
-                console.log('wrong password')
+        setLoading(true)
+        try {
+            if(validateLogin(loginCredential)) {
+                const user = await login(loginCredential)
+                if(user === null) {
+                    console.log('wrong password')
+                }
             }
+        } catch(e) {
+            console.log(e)
+        } finally {
+            setLoading(false)
         }
+
     }
     return (
         <form className="flex flex-col p-4 gap-2" action="">
             <h1 className="text-3xl font-bold my-2">Login</h1>
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email" className="font-bold">Email</label>
             <input id="email" name="email" className="border p-1" type="email" onChange={onInputChange} placeholder="johndoe@gmail.com" />
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password" className="font-bold">Password</label>
             <input id="password" name="password" className="border p-1" type="password" onChange={onInputChange} placeholder="******"/>
-            <button className="font-bold rounded-md bg-green-200 shadow-md px-1 py-2 my-2" onClick={onLoginClick}>Login</button>
+            <button className="font-bold rounded-md bg-green-200 shadow-md px-1 py-2 my-2" onClick={onLoginClick}>{loading ? 'Loading...' : 'Login'}</button>
         </form>
     )
 }
