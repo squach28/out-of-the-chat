@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Registration } from "../types/Registration"
 import validator from 'validator'
-import { User, createUserWithEmailAndPassword, getAuth, sendEmailVerification, updateProfile } from "firebase/auth"
+import { User, sendEmailVerification } from "firebase/auth"
 import { FirebaseError } from "firebase/app"
 import { generateErrorMessage } from "../utils/ErrorMessageGenerator"
 import { useNavigate } from "react-router-dom"
@@ -29,7 +29,6 @@ const SignupForm = () => {
     })
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string>('')
-    const auth = getAuth()
     const navigate = useNavigate()
 
     // handle any input change in form and update registration object
@@ -47,18 +46,26 @@ const SignupForm = () => {
         })
     }
 
-    // use firebase auth to create a user with email and password
-    // after account creation, update user's display name
-    // returns the created user
+    // creates an account with the user's email, password, and name
+    // verification email will be sent on successful sign up
     const signup = async (registration: Registration): Promise<User | FirebaseError | undefined> => {
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, registration.data.email, registration.data.password)
-            await updateUserDisplayName(userCredential.user, `${registration.data.firstName} ${registration.data.lastName}`)
-            return userCredential.user
-        } catch(e) {
-            if(e instanceof FirebaseError) {
-                return e
+            const result = await fetch(`${import.meta.env.VITE_API_URL}/auth/createAccount`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(registration.data)
+            })
+            const data = await result.json()
+            if(result.ok) {
+                console.log('yay')
+            } else {
+                setError(data.message)
             }
+            return undefined
+        } catch(e) {
+            console.log(e)
         }
     }
 
@@ -98,14 +105,6 @@ const SignupForm = () => {
                 }
             })
         }
-    }
-
-    // use firebase auth to update a user's display name
-    const updateUserDisplayName = async (user: User, name: string) => {
-        await updateProfile(user, {
-            displayName: name
-        })
-        return
     }
 
     // send a verification email to the user
