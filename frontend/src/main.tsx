@@ -6,6 +6,7 @@ import { initializeApp } from 'firebase/app'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Login from './pages/Login.tsx'
 import Signup from './pages/Signup.tsx'
+import ForgotPassword from './pages/ForgotPassword.tsx'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: '/signup',
     element: <Signup />
+  },
+  {
+    path: '/forgotPassword',
+    element: <ForgotPassword />
   }
 ])
 

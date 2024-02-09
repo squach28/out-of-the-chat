@@ -7,7 +7,7 @@ const Navbar = () => {
     const auth = getAuth()
     const location = useLocation()
     const pathName = location.pathname
-    const pathsToHideLogin = [ '/signup', '/login']
+    const pathsToHideLogin = [ '/signup', '/login', '/forgotPassword']
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
