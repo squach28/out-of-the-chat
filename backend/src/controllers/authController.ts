@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express'
 import type { FirebaseError } from 'firebase-admin'
 import admin from 'firebase-admin'
+import { sendEmailVerifcation } from '../utils/mailUtil'
 
 export const isUserVerified = async (req: Request, res: Response): Promise<void> => {
   const email = req.query.email as string
@@ -13,18 +14,20 @@ export const isUserVerified = async (req: Request, res: Response): Promise<void>
 }
 
 export const createAccount = async (req: Request, res: Response): Promise<void> => {
-  console.log(req.body)
   const { firstName, lastName, email, password } = req.body
+  const name = firstName + ' ' + lastName
   try {
     const result = await admin.auth().createUser({
       email,
       password,
-      displayName: `${firstName} ${lastName}`
+      displayName: name
     })
     const resMessage = {
       email: result.email,
       uid: result.uid
     }
+    const verifyEmailUrl = await admin.auth().generateEmailVerificationLink(email as string)
+    sendEmailVerifcation(email as string, firstName as string, verifyEmailUrl)
     res.status(201).json(resMessage)
   } catch (e) {
     const errCode = e as FirebaseError
