@@ -2,7 +2,7 @@ import { useState } from "react"
 import { LoginCredential } from "../types/LoginCredential"
 import validator from "validator"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 
 const LoginForm = () => {
@@ -121,13 +121,12 @@ const LoginForm = () => {
                 <label htmlFor="email" className="font-bold">Email</label>
                 {loginCredential.errors.email !== '' ? <p className={`text-red-400 font-bold`}>{loginCredential.errors.email}</p> : null}
             </div>
-            <input id="email" name="email" className={`border p-1 ${loginCredential.errors.email === '' ? 'border-gray-200' : 'border-red-400'}`} type="email" onBlur={onInputBlur} onChange={onInputChange} placeholder="johndoe@gmail.com" />
+            <input id="email" name="email" className={`border p-1 ${loginCredential.errors.email === '' ? 'border-gray-200' : 'border-red-400'}`} type="email" onBlur={onInputBlur} onChange={onInputChange} placeholder="Email" />
             <div className="flex flex-row gap-3">
                 <label htmlFor="password" className="font-bold">Password</label>
                 {loginCredential.errors.password !== '' ? <p className="text-red-400 font-bold">{loginCredential.errors.password}</p> : null}
             </div>
-            <input id="password" name="password" className={`border p-1 ${loginCredential.errors.password === '' ? 'border-gray-200' : 'border-red-400'}`} type="password" onBlur={onInputBlur} onChange={onInputChange} placeholder="******"/>
-            <Link to="/forgotPassword" className="text-end font-bold text-button-light">Forgot password?</Link>
+            <input id="password" name="password" className={`border p-1 ${loginCredential.errors.password === '' ? 'border-gray-200' : 'border-red-400'}`} type="password" onBlur={onInputBlur} onChange={onInputChange} placeholder="Password"/>
             {error ? <p className="text-red-400">{error}</p> : null}
             <button className={`font-bold rounded-md shadow-md px-1 py-2 my-2 text-button-text-light ${!validateLogin(loginCredential) ? 'bg-gray-400' : 'bg-button-light'}`} disabled={loading || !validateLogin(loginCredential)} onClick={onLoginClick}>{loading ? 'Loading...' : 'Login'}</button>
         </form>

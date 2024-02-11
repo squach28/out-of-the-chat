@@ -7,7 +7,10 @@ const Login = () => {
         <div className="flex flex-col">
             <Navbar />
             <LoginForm />
-            <p className="text-center">Don't have an account? <Link to="/signup" replace={true} className="font-bold">Sign Up</Link></p>
+            <div className="flex justify-between px-4">
+                <Link to="/forgotPassword" className="text-end">Forgot password?</Link>
+                <Link to="/signup" replace={true} className="">Sign Up</Link>
+            </div>
          </div>
     )
 }
