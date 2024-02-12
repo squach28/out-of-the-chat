@@ -17,10 +17,10 @@ const Navbar = () => {
         })
     }, [auth])
     return (
-        <nav className="w-full bg-[#d1d1e9] text-headline-light p-3">
+        <nav className="w-full bg-[#d1d1e9] text-headline-light p-4">
             <ul className="flex justify-between">
-                <li className="font-bold"><Link to="/">Out of the Chat</Link></li>
-                {pathsToHideLogin.includes(pathName) ? null : <li>{ user ? <p>{user.displayName}</p> : <Link to="/login">Login</Link>}</li>}
+                <li className="font-bold text-xl"><Link to="/">Out of the Chat</Link></li>
+                {pathsToHideLogin.includes(pathName) ? null : <li>{ user ? <img className="w-7 h-7 rounded-full" src={user?.photoURL ?? ''} alt="" /> : <Link to="/login">Login</Link>}</li>}
             </ul>
         </nav>
     )
