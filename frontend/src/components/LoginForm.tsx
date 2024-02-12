@@ -149,7 +149,7 @@ const LoginForm = () => {
             <input id="password" name="password" className={`border p-1 ${loginCredential.errors.password === '' ? 'border-gray-200' : 'border-red-400'}`} type="password" onBlur={onInputBlur} onChange={onInputChange} placeholder="Password"/>
             {error ? <p className="text-red-400">{error}</p> : null}
             <button className={`font-bold rounded-md shadow-md px-1 py-2 my-2 text-button-text-light ${!validateLogin(loginCredential) ? 'bg-gray-400' : 'bg-button-light'}`} disabled={loading || !validateLogin(loginCredential)} onClick={onLoginClick}>{loading ? 'Loading...' : 'Login'}</button>
-            <div className="flex justify-between px-4">
+            <div className="flex justify-between">
                 <Link to="/forgotPassword" className="text-end">Forgot password?</Link>
                 <Link to="/signup" replace={true} className="">Sign Up</Link>
             </div>
