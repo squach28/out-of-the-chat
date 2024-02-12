@@ -7,6 +7,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Login from './pages/Login.tsx'
 import Signup from './pages/Signup.tsx'
 import ForgotPassword from './pages/ForgotPassword.tsx'
+import VerifyEmail from './pages/VerifyEmail.tsx'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
   {
     path: '/forgotPassword',
     element: <ForgotPassword />
+  },
+  {
+    path: '/verifyEmail',
+    element: <VerifyEmail />
   }
 ])
 
