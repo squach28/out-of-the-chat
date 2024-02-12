@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Registration } from "../types/Registration"
 import validator from 'validator'
-import { User, sendEmailVerification } from "firebase/auth"
+import { User } from "firebase/auth"
 import { FirebaseError } from "firebase/app"
 import { generateErrorMessage } from "../utils/ErrorMessageGenerator"
 import { useNavigate } from "react-router-dom"
@@ -59,11 +59,11 @@ const SignupForm = () => {
             })
             const data = await result.json()
             if(result.ok) {
-                console.log('yay')
+                console.log(data)
             } else {
                 setError(data.message)
             }
-            return undefined
+            return data
         } catch(e) {
             console.log(e)
         }
@@ -107,11 +107,6 @@ const SignupForm = () => {
         }
     }
 
-    // send a verification email to the user
-    const sendVerificationEmail = async (user: User) => {
-        await sendEmailVerification(user)
-    }
-
     // validate all fields in registration object
     const validateRegistration = (registration: Registration): boolean => {
         if(
@@ -145,8 +140,7 @@ const SignupForm = () => {
                     setError(generateErrorMessage(user.code))
                     return
                 } else {
-                    await sendVerificationEmail(user as User)
-                    navigate('/', { replace: true})
+                    navigate('/login?initialLogin=true', { replace: true})
                     return
                 }
             }

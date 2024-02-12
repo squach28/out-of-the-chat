@@ -4,7 +4,7 @@ import validator from "validator"
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
-import googleIcon from '../assets/icons/googleIcon.svg'
+import googleIcon from '../assets/icons/google-icon.svg'
 
 
 const LoginForm = () => {
