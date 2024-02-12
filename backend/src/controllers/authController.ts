@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express'
 import type { FirebaseError } from 'firebase-admin'
 import admin from 'firebase-admin'
+import { getStorage } from 'firebase-admin/storage'
 import { sendEmailVerification, sendResetPasswordEmail } from '../utils/mailUtil'
 
 export const isUserVerified = async (req: Request, res: Response): Promise<void> => {
@@ -11,6 +12,17 @@ export const isUserVerified = async (req: Request, res: Response): Promise<void>
   } catch (e) {
     res.status(500).json({ message: 'Something went wrong' })
   }
+}
+
+const retrieveDefaultProfilePictureURL = async (): Promise<string> => {
+  const DEFAULT_PROFILE_PICTURE_PATH = 'profile_pictures/default.jpeg'
+  const bucket = getStorage().bucket()
+  const file = await bucket.file(DEFAULT_PROFILE_PICTURE_PATH).get()
+  const signedUrl = await file[0].getSignedUrl({
+    action: 'read',
+    expires: '05-20-2500'
+  })
+  return signedUrl[0]
 }
 
 export const createAccount = async (req: Request, res: Response): Promise<void> => {
@@ -27,6 +39,14 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
       uid: result.uid
     }
     const verifyEmailUrl = await admin.auth().generateEmailVerificationLink(email as string)
+    const photoURL = await retrieveDefaultProfilePictureURL()
+    admin.auth().updateUser(result.uid, {
+      photoURL
+    })
+      .then((res) => { console.log(res) })
+      .catch((e) => {
+        console.log(e)
+      })
     sendEmailVerification(email as string, firstName as string, verifyEmailUrl)
     res.status(201).json(resMessage)
   } catch (e) {

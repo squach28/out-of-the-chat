@@ -5,6 +5,8 @@ import serviceAccount from '../config/serviceAccountKey.json'
 import authRouter from './routes/authRoutes'
 import cors from 'cors'
 import bodyParser from 'body-parser'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const PORT = process.env.PORT ?? 4000
 const app = express()
@@ -20,7 +22,8 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, () => {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as ServiceAccount)
+    credential: admin.credential.cert(serviceAccount as ServiceAccount),
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET
   })
   console.log(`Listening on ${PORT}`)
 })
