@@ -12,10 +12,10 @@ enum VerifyEmailResult {
 const VerifyEmail = () => {
     const [result, setResult] = useState<VerifyEmailResult>(VerifyEmailResult.PENDING)
     const [params] = useSearchParams()
+    const actionCode = params.get('oobCode')
 
     useEffect(() => {
         const auth = getAuth()
-        const actionCode = params.get('oobCode')
         if(actionCode !== null) {
             applyActionCode(auth, actionCode)
                 .then(() => {
@@ -29,7 +29,7 @@ const VerifyEmail = () => {
             console.log('missing action code')
         }
 
-    }, [params])
+    }, [actionCode])
 
     switch(result) {
         case VerifyEmailResult.PENDING:
