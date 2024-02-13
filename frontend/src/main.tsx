@@ -1,5 +1,4 @@
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
 import './index.css'
 import { initializeApp } from 'firebase/app'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
@@ -7,6 +6,8 @@ import Login from './pages/Login.tsx'
 import Signup from './pages/Signup.tsx'
 import ForgotPassword from './pages/ForgotPassword.tsx'
 import AccountSetup from './pages/AccountSetup.tsx'
+import Home from './pages/Home.tsx'
+import CreateTrip from './pages/CreateTrip.tsx'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -23,7 +24,7 @@ initializeApp(firebaseConfig)
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: <Home />,
   },
   {
     path: '/login',
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
   {
     path: '/accountSetup',
     element: <AccountSetup />
+  },
+  {
+    path: '/createTrip',
+    element: <CreateTrip />
   }
 ])
 
