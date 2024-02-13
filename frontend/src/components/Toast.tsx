@@ -12,12 +12,12 @@ const Toast = (toastProps: ToastProps) => {
     return (
         active ? 
             <div className="w-full flex items-center gap-5 px-5 py-2 bg-[#49A255] text-[#fffffe] rounded-md">
-                <img className="w-10 h-10 bg-white rounded-full object-contain p-1" src={toastProps.iconImg} alt="" />
+                <img className="w-8 h-8 bg-white rounded-full object-contain p-1" src={toastProps.iconImg} alt="" />
                 <div className="flex flex-col flex-1">
                     <p className="text-xl font-bold">{toastProps.title}</p>
                     <p className="text-sm">{toastProps.content}</p>
                 </div>
-                <img className="w-8 h-8 object-contain hover:cursor-pointer" src={xIcon} alt="" onClick={() => setActive(false)} />
+                <img className="w-4 h-4 object-contain hover:cursor-pointer" src={xIcon} alt="" onClick={() => setActive(false)} />
             </div>
         :
             null
