@@ -36,7 +36,7 @@ const TripNameForm = (formProps: FormProps) => {
         setError('')
     }
 
-    const onNameBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const onNameBlur = () => {
         if(!validateName(name)) {
             setError('Field is required')
         }
@@ -65,12 +65,24 @@ const TripLocationForm = (formProps: FormProps) => {
     )
 }
 
+const TripDatesForm = (formProps: FormProps) => {
+
+    return (
+        <form className="flex flex-col gap-3">
+            <label>Trip Dates</label>
+            <input className="border p-1" type="date"/>
+            <button className="block ml-auto bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={formProps.nextStep}>Finish</button>
+        </form>
+    )
+}
+
 
 
 enum CreateTripStep {
     NAME,
     LOCATION,
-    DATES
+    DATES,
+    CREATING
 }
 
 const CreateTrip = () => {
@@ -97,6 +109,9 @@ const CreateTrip = () => {
             case CreateTripStep.LOCATION:
                 setStep(CreateTripStep.DATES)
                 return
+            case CreateTripStep.DATES:
+                setStep(CreateTripStep.CREATING)
+                return
             default: 
                 return 
         }
@@ -108,6 +123,8 @@ const CreateTrip = () => {
                 return <TripNameForm editTrip={editTrip} nextStep={nextStep} />
             case CreateTripStep.LOCATION:
                 return <TripLocationForm editTrip={editTrip} nextStep={nextStep} />
+            case CreateTripStep.DATES:
+                return <TripDatesForm editTrip={editTrip} nextStep={nextStep} />
             default:
                 return null
         }
