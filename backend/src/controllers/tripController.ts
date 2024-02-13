@@ -23,15 +23,17 @@ export const createTrip = async (req: Request, res: Response): Promise<void> => 
   try {
     const tripsCollection = admin.firestore().collection(DB_NAME)
     const tripDoc = tripsCollection.doc()
-    const result = await tripDoc.set({
+    await tripDoc.set({
       id: tripDoc.id,
       name,
       location,
       startDate,
       endDate,
-      createdBy
+      createdBy,
+      attractions: [],
+      hotels: [],
+      restaurants: []
     })
-    console.log(result)
     res.status(201).json({ message: 'Success, trip was created' })
   } catch (e) {
     console.log(e)
