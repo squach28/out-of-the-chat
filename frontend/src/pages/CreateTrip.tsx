@@ -2,6 +2,7 @@ import { useState } from "react"
 import Navbar from "../components/Navbar"
 import { TripCreation } from "../types/TripCreation"
 import validator from "validator"
+import Calendar from "react-calendar"
 
 type FormProps = {
     editTrip: (name: string, value: string) => void
@@ -56,11 +57,46 @@ const TripNameForm = (formProps: FormProps) => {
 
 const TripLocationForm = (formProps: FormProps) => {
 
+    const [location, setLocation] = useState<string>('')
+    const [error, setError] = useState<string>('')
+
+    const validateLocation = (location: string) => {
+        if(validator.isEmpty(location)) {
+            return false
+        }
+
+        return true
+    }
+
+    const onContinueClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        if(!validateLocation(location)) {
+            setError('Field is required')
+        }
+        const field = 'location'
+        formProps.editTrip(field, location)
+        formProps.nextStep()
+    }
+
+    const onLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setLocation(e.target.value)
+        setError('')
+    }
+
+    const onLocationBlur = () => {
+        if(!validateLocation(location)) {
+            setError('Field is required')
+        }
+    }
+
     return (
         <form className="flex flex-col gap-3">
-            <label>Trip Location</label>
-            <input className="border p-1" type="text" placeholder="Trip Location"/>
-            <button className="block ml-auto bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={formProps.nextStep}>Continue</button>
+            <div>
+                <label>Trip Location</label>
+                {error ? <p className="text-red-400">{error}</p> : null}
+            </div>
+            <input className="border p-1" type="text" onChange={onLocationChange} onBlur={onLocationBlur} placeholder="Trip Location"/>
+            <button className="block ml-auto bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={onContinueClicked}>Continue</button>
         </form>
     )
 }
@@ -93,7 +129,7 @@ const CreateTrip = () => {
         endDate: null
     })
     const [step, setStep] = useState<CreateTripStep>(CreateTripStep.NAME)
-
+    console.log(trip)
     const editTrip = (name: string, value: string) => {
         setTrip({
             ...trip,
