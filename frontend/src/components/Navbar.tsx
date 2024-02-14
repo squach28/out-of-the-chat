@@ -6,8 +6,10 @@ import { Link, useLocation } from "react-router-dom"
 
 const ExtendedMenu = () => {
     return(
-        <ul className="absolute w-full left-0 top-[100%] p-2 text-center bg-gray-200">
-            <li><Link to={`/trips`}>Trips</Link></li>
+        <ul className="absolute w-full left-0 top-[100%] p-2 text-center bg-gray-500">
+            <li className="w-full">
+                <Link className="w-full block" to={`/trips`}>Trips</Link>
+            </li>
             <li>Log out</li>
         </ul>
     )
@@ -34,7 +36,7 @@ const Navbar = () => {
     }
 
     return (
-        <nav className="w-full bg-[#d1d1e9] text-headline-light p-4 relative">
+        <nav className="w-full bg-navbar-light text-navbar-text-light p-4 relative">
             <ul className="flex justify-between relative">
                 <li className="font-bold text-xl"><Link to="/">Out of the Chat</Link></li>
                 <div className="flex gap-4">

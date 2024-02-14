@@ -10,6 +10,12 @@ export default {
         "background": {
           "light": "#fffffe"
         },
+        "navbar": {
+          "light": "#6246ea"
+        },
+        "navbar-text": {
+          "light": "#fffffe"
+        },
         "button": {
           "light": "#6246ea"
         },

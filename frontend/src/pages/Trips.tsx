@@ -1,28 +1,33 @@
 import { useEffect, useState } from "react"
 import Navbar from "../components/Navbar"
 import { Trip } from "../types/Trip"
-import { getAuth } from "firebase/auth"
-import { useNavigate } from "react-router-dom"
+import { getAuth, onAuthStateChanged } from "firebase/auth"
+import { Link, useNavigate } from "react-router-dom"
 
 const Trips = () => {
     const [trips, setTrips] = useState<Trip[] | null>(null)
     const navigate = useNavigate()
+
     useEffect(() => {
         const auth = getAuth()
-
-        if(auth.currentUser === null) {
-            navigate('/login', { replace: true })
-        } else {
-            fetch(`${import.meta.env.VITE_API_URL}/trips?uid=${auth.currentUser.uid}`)
-                .then(res => res.json())
-                .then(data => setTrips(data))
-        }
+        onAuthStateChanged(auth, (user) => {
+            if(user) {
+                fetch(`${import.meta.env.VITE_API_URL}/trips?uid=${user.uid}`)
+                    .then(res => res.json())
+                    .then(data => setTrips(data))
+            } else {
+                navigate('/login', { replace: true })
+            }
+        })
     }, [navigate])
     return (
         <div>
             <Navbar />
             <div className="p-4">
-                <h1 className="text-3xl font-bold">Your Trips</h1>
+                <div className="flex justify-between">
+                    <h1 className="text-3xl font-bold">Your Trips</h1>
+                    <Link className="w-1/3 text-md bg-green-500 font-bold text-button-text-light rounded-md text-center px-3 py-2" to="/createTrip">Create Trip</Link>
+                </div>
                 { trips ? 
                     <ul>
                         {trips.map(trip => <li key={trip.id}>{trip.name}</li>)}
