@@ -1,7 +1,9 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import Navbar from "../components/Navbar"
 import { TripCreation } from "../types/TripCreation"
 import validator from "validator"
+import { getAuth } from "firebase/auth"
+import { useNavigate } from "react-router-dom"
 
 type FormProps = {
     value?: string
@@ -55,7 +57,7 @@ const TripNameForm = (formProps: FormProps) => {
                 <label htmlFor="name">Trip Name</label>
                 {error ? <p className="text-red-400">{error}</p> : null}
             </div>
-                <input id="name" name="name" className="border p-1" type="text" onChange={onNameChange} onBlur={onNameBlur} value={name} placeholder="Trip Name"/>
+                <input id="name" name="name" className="border p-1" autoFocus={true} type="text" onChange={onNameChange} onBlur={onNameBlur} value={name} placeholder="Trip Name"/>
                 <button className="block ml-auto bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={onContinueClicked}>Continue</button>
         </form>
     )
@@ -101,7 +103,7 @@ const TripLocationForm = (formProps: FormProps) => {
                 <label>Trip Location</label>
                 {error ? <p className="text-red-400">{error}</p> : null}
             </div>
-            <input className="border p-1" type="text" onChange={onLocationChange} onBlur={onLocationBlur} value={location} placeholder="Trip Location"/>
+            <input className="border p-1" autoFocus={true} type="text" onChange={onLocationChange} onBlur={onLocationBlur} value={location} placeholder="Trip Location"/>
             <div className="flex gap-1 ml-auto">
                 <button className="bg-gray-400 text-button-text-light px-3 py-2 rounded-lg" onClick={formProps.previousStep}>Back</button>
                 <button className="bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={onContinueClicked}>Continue</button>
@@ -120,19 +122,23 @@ const TripDatesForm = (formProps: DateFormProps) => {
     })
 
     const onStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const startDate = new Date(e.target.value).toISOString()
         setErrors({
             ...errors,
             [e.target.name]: ''
         })
         setStartDate(e.target.value)
+        formProps.editTrip('startDate', startDate)
     }
 
     const onEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const endDate = new Date(e.target.value).toISOString()
         setErrors({
             ...errors,
             [e.target.name]: ''
         })
         setEndDate(e.target.value)
+        formProps.editTrip('endDate', endDate)
     }
 
     const validateDates = (startDate: string, endDate: string) => {
@@ -156,8 +162,6 @@ const TripDatesForm = (formProps: DateFormProps) => {
         const start = new Date(startDate)
         const end = new Date(endDate)
         if(!validateDates(startDate, endDate)) {
-
-            
             if(start >= end) {
                 setErrors({
                     ...errors,
@@ -166,7 +170,6 @@ const TripDatesForm = (formProps: DateFormProps) => {
                 return
             }
         }
-        console.log(start.toISOString())
         formProps.editTrip('startDate', start.toISOString())
         formProps.editTrip('endDate', end.toISOString())
         formProps.nextStep()
@@ -204,24 +207,84 @@ const TripDatesForm = (formProps: DateFormProps) => {
     )
 }
 
+type CreatingTripProps = {
+    trip: TripCreation
+}
+
+const CreatingTrip = (creatingTripProps: CreatingTripProps) => {
+
+    const [loading, setLoading] = useState<boolean>(true)
+    const [trip, setTrip] = useState(null)
+
+    useEffect(() => {
+        const createTrip = async (trip: TripCreation) => {
+            try {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/trip`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(trip)
+                })
+                const createdTrip = await res.json()
+                return createdTrip
+            } catch(e) {
+                console.log(e)
+                return null
+            }
+        }
+
+        createTrip(creatingTripProps.trip)
+            .then(createdTrip => {
+                setTrip(createdTrip)
+            })
+            .finally(() => {
+                setLoading(false)
+            })
+    })
+    return(
+        <div>
+            {loading ? <p>Loading...</p> : trip !== null ? <h1>Sucess!</h1>: null}
+        </div>
+    )
+}
+
 
 
 enum CreateTripStep {
     NAME,
     LOCATION,
     DATES,
-    CREATING
+    CREATING,
 }
 
 const CreateTrip = () => {
+
     const [trip, setTrip] = useState<TripCreation>({
         name: '',
         location: '',
         startDate: null,
-        endDate: null
+        endDate: null,
+        createdBy: ''
     })
     const [step, setStep] = useState<CreateTripStep>(CreateTripStep.NAME)
-    console.log(trip)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const auth = getAuth()
+        if(auth.currentUser !== null) {
+            const user = auth.currentUser
+            setTrip(prev => {
+                return {
+                    ...prev,
+                    createdBy: user.uid
+                }
+            })
+        } else {
+            navigate('/login', { replace: true })
+        }
+    }, [navigate])
+
     const editTrip = (name: string, value: string) => {
         setTrip(prev => {
             return {
@@ -232,7 +295,7 @@ const CreateTrip = () => {
         })
     }   
 
-    const nextStep = () => {
+    const nextStep = async () => {
         switch(step) {
             case CreateTripStep.NAME:
                 setStep(CreateTripStep.LOCATION)
@@ -270,12 +333,12 @@ const CreateTrip = () => {
             case CreateTripStep.DATES:
                 return <TripDatesForm editTrip={editTrip} previousStep={previousStep} nextStep={nextStep} />
             case CreateTripStep.CREATING:
-                return <h1>Creating Trip</h1>
+                return <CreatingTrip trip={trip} />
             default:
                 return null
         }
     }
-
+    
     return (
         <div>
             <Navbar />

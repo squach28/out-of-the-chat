@@ -3,4 +3,5 @@ export type TripCreation = {
     location: string 
     startDate: Date | null
     endDate: Date | null
+    createdBy: string
 }
