@@ -1,17 +1,18 @@
-import { useState } from "react"
+import React, { useState } from "react"
 import Navbar from "../components/Navbar"
 import { TripCreation } from "../types/TripCreation"
 import validator from "validator"
-import Calendar from "react-calendar"
 
 type FormProps = {
+    value?: string
     editTrip: (name: string, value: string) => void
-    nextStep: () => void
+    nextStep: () => void,
+    previousStep: () => void
 }
 
 const TripNameForm = (formProps: FormProps) => {
 
-    const [name, setName] = useState<string>('')
+    const [name, setName] = useState<string>(formProps.value ?? '')
     const [error, setError] = useState<string>('')
 
     const validateName = (name: string) => {
@@ -49,15 +50,15 @@ const TripNameForm = (formProps: FormProps) => {
                 <label htmlFor="name">Trip Name</label>
                 {error ? <p className="text-red-400">{error}</p> : null}
             </div>
-                <input id="name" name="name" className="border p-1" type="text" onChange={onNameChange} onBlur={onNameBlur} placeholder="Trip Name"/>
-            <button className="block ml-auto bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={onContinueClicked}>Continue</button>
+                <input id="name" name="name" className="border p-1" type="text" onChange={onNameChange} onBlur={onNameBlur} value={name} placeholder="Trip Name"/>
+                <button className="block ml-auto bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={onContinueClicked}>Continue</button>
         </form>
     )
 }
 
 const TripLocationForm = (formProps: FormProps) => {
 
-    const [location, setLocation] = useState<string>('')
+    const [location, setLocation] = useState<string>(formProps.value ?? '')
     const [error, setError] = useState<string>('')
 
     const validateLocation = (location: string) => {
@@ -91,23 +92,102 @@ const TripLocationForm = (formProps: FormProps) => {
 
     return (
         <form className="flex flex-col gap-3">
-            <div>
+            <div className="flex gap-2">
                 <label>Trip Location</label>
                 {error ? <p className="text-red-400">{error}</p> : null}
             </div>
-            <input className="border p-1" type="text" onChange={onLocationChange} onBlur={onLocationBlur} placeholder="Trip Location"/>
-            <button className="block ml-auto bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={onContinueClicked}>Continue</button>
+            <input className="border p-1" type="text" onChange={onLocationChange} onBlur={onLocationBlur} value={location} placeholder="Trip Location"/>
+            <div className="flex gap-1 ml-auto">
+                <button className="bg-gray-400 text-button-text-light px-3 py-2 rounded-lg" onClick={formProps.previousStep}>Back</button>
+                <button className="bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={onContinueClicked}>Continue</button>
+            </div>
         </form>
     )
 }
 
 const TripDatesForm = (formProps: FormProps) => {
 
+    const [startDate, setStartDate] = useState<string>('')
+    const [endDate, setEndDate] = useState<string>('')
+    const [errors, setErrors] = useState({
+        startDate: '',
+        endDate: ''
+    })
+
+    const onStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setErrors({
+            ...errors,
+            [e.target.name]: ''
+        })
+        setStartDate(e.target.value)
+    }
+
+    const onEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setErrors({
+            ...errors,
+            [e.target.name]: ''
+        })
+        setEndDate(e.target.value)
+    }
+
+    const validateDates = (startDate: string, endDate: string) => {
+        if(validator.isEmpty(startDate) || validator.isEmpty(endDate)) {
+            return false
+        }
+
+        const start = new Date(startDate)
+        const end = new Date(endDate)
+        if(end <= start) {
+            return false
+        }
+
+        return true
+    }
+
+    const onFinishClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        if(!validateDates(startDate, endDate)) {
+            const start = new Date(startDate)
+            const end = new Date(endDate)
+
+            if(start >= end) {
+                setErrors({
+                    ...errors,
+                    startDate: 'Range is not valid'
+                })
+                return
+            }
+        }
+    }
+
+    const onInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        const fieldName = e.target.name
+        if(validator.isEmpty(e.target.value)) {
+            setErrors({
+                ...errors,
+                [fieldName]: 'Field is required'
+            })
+        }
+    }
+    
+
     return (
         <form className="flex flex-col gap-3">
-            <label>Trip Dates</label>
-            <input className="border p-1" type="date"/>
-            <button className="block ml-auto bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={formProps.nextStep}>Finish</button>
+            <h1 className="text-3xl">Trip Dates</h1>
+            <div className="flex gap-2">
+                <label htmlFor="startDate">Start</label>
+                {errors.startDate ? <p className="text-red-400">{errors.startDate}</p> : null}
+            </div>
+            <input className="border p-1" id="startDate" name="startDate" type="date" onChange={onStartDateChange} onBlur={onInputBlur} />
+            <div className="flex gap-2">
+                <label htmlFor="endDate">Return</label>
+                {errors.endDate ? <p className="text-red-400">{errors.endDate}</p> : null}
+            </div>
+            <input className="border p-1" id="endDate" name="endDate" type="date" onChange={onEndDateChange} onBlur={onInputBlur} />
+            <div className="flex gap-1 ml-auto">
+                <button className="bg-gray-400 text-button-text-light px-3 py-2 rounded-lg" onClick={formProps.previousStep}>Back</button>
+                <button className="block ml-auto bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={onFinishClicked}>Finish</button>
+            </div>
         </form>
     )
 }
@@ -153,14 +233,27 @@ const CreateTrip = () => {
         }
     }
 
+    const previousStep = () => {
+        switch(step) {
+            case CreateTripStep.LOCATION:
+                setStep(CreateTripStep.NAME)
+                return
+            case CreateTripStep.DATES:
+                setStep(CreateTripStep.LOCATION)
+                return
+            default:
+                return 
+        }
+    }
+
     const renderCreateTripStep = () => {
         switch(step) {
             case CreateTripStep.NAME:
-                return <TripNameForm editTrip={editTrip} nextStep={nextStep} />
+                return <TripNameForm editTrip={editTrip} previousStep={previousStep} nextStep={nextStep} value={trip.name} />
             case CreateTripStep.LOCATION:
-                return <TripLocationForm editTrip={editTrip} nextStep={nextStep} />
+                return <TripLocationForm editTrip={editTrip} previousStep={previousStep} nextStep={nextStep} value={trip.location} />
             case CreateTripStep.DATES:
-                return <TripDatesForm editTrip={editTrip} nextStep={nextStep} />
+                return <TripDatesForm editTrip={editTrip} previousStep={previousStep} nextStep={nextStep} />
             default:
                 return null
         }
