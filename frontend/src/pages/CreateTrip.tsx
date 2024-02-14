@@ -10,6 +10,11 @@ type FormProps = {
     previousStep: () => void
 }
 
+type DateFormProps = FormProps & {
+    startDate?: string
+    endDate?: string
+}
+
 const TripNameForm = (formProps: FormProps) => {
 
     const [name, setName] = useState<string>(formProps.value ?? '')
@@ -105,7 +110,7 @@ const TripLocationForm = (formProps: FormProps) => {
     )
 }
 
-const TripDatesForm = (formProps: FormProps) => {
+const TripDatesForm = (formProps: DateFormProps) => {
 
     const [startDate, setStartDate] = useState<string>('')
     const [endDate, setEndDate] = useState<string>('')
@@ -132,12 +137,14 @@ const TripDatesForm = (formProps: FormProps) => {
 
     const validateDates = (startDate: string, endDate: string) => {
         if(validator.isEmpty(startDate) || validator.isEmpty(endDate)) {
+            console.log('empty')
             return false
         }
 
         const start = new Date(startDate)
         const end = new Date(endDate)
         if(end <= start) {
+            console.log('invalid')
             return false
         }
 
@@ -146,10 +153,11 @@ const TripDatesForm = (formProps: FormProps) => {
 
     const onFinishClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
+        const start = new Date(startDate)
+        const end = new Date(endDate)
         if(!validateDates(startDate, endDate)) {
-            const start = new Date(startDate)
-            const end = new Date(endDate)
 
+            
             if(start >= end) {
                 setErrors({
                     ...errors,
@@ -158,6 +166,10 @@ const TripDatesForm = (formProps: FormProps) => {
                 return
             }
         }
+        console.log(start.toISOString())
+        formProps.editTrip('startDate', start.toISOString())
+        formProps.editTrip('endDate', end.toISOString())
+        formProps.nextStep()
     }
 
     const onInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -211,9 +223,12 @@ const CreateTrip = () => {
     const [step, setStep] = useState<CreateTripStep>(CreateTripStep.NAME)
     console.log(trip)
     const editTrip = (name: string, value: string) => {
-        setTrip({
-            ...trip,
-            [name]: value
+        setTrip(prev => {
+            return {
+                ...prev,
+                [name]: value
+            }
+
         })
     }   
 
@@ -254,6 +269,8 @@ const CreateTrip = () => {
                 return <TripLocationForm editTrip={editTrip} previousStep={previousStep} nextStep={nextStep} value={trip.location} />
             case CreateTripStep.DATES:
                 return <TripDatesForm editTrip={editTrip} previousStep={previousStep} nextStep={nextStep} />
+            case CreateTripStep.CREATING:
+                return <h1>Creating Trip</h1>
             default:
                 return null
         }
