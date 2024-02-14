@@ -16,7 +16,7 @@ app.use(cors())
 app.use(bodyParser.json())
 
 app.use('/auth', authRouter)
-app.use('/trip', tripRouter)
+app.use('/trips', tripRouter)
 
 app.get('/', (req, res) => {
   res.send('hello')
