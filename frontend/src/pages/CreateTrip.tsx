@@ -219,7 +219,8 @@ const CreatingTrip = (creatingTripProps: CreatingTripProps) => {
     useEffect(() => {
         const createTrip = async (trip: TripCreation) => {
             try {
-                const res = await fetch(`${import.meta.env.VITE_API_URL}/trip`, {
+                console.log('creating')
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/trips`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -241,7 +242,7 @@ const CreatingTrip = (creatingTripProps: CreatingTripProps) => {
             .finally(() => {
                 setLoading(false)
             })
-    })
+    }, [creatingTripProps])
     return(
         <div>
             {loading ? <p>Loading...</p> : trip !== null ? <h1>Sucess!</h1>: null}
@@ -338,7 +339,7 @@ const CreateTrip = () => {
                 return null
         }
     }
-    
+
     return (
         <div>
             <Navbar />

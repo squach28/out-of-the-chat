@@ -2,12 +2,24 @@ import { User, getAuth, onAuthStateChanged } from "firebase/auth"
 import { useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 
+
+
+const ExtendedMenu = () => {
+    return(
+        <ul className="absolute w-full left-0 top-[100%] p-2 text-center bg-gray-200">
+            <li><Link to={`/trips`}>Trips</Link></li>
+            <li>Log out</li>
+        </ul>
+    )
+}
+
 const Navbar = () => {
     const [user, setUser] = useState<User | null>(null)
     const auth = getAuth()
     const location = useLocation()
     const pathName = location.pathname
     const pathsToHideLogin = [ '/signup', '/login', '/forgotPassword']
+    const [showExtendedMenu, setShowExtendedMenu] = useState<boolean>(false)
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
@@ -16,12 +28,21 @@ const Navbar = () => {
             }
         })
     }, [auth])
+
+    const onProfileClicked = () => {
+        setShowExtendedMenu(prev => !prev)
+    }
+
     return (
-        <nav className="w-full bg-[#d1d1e9] text-headline-light p-4">
-            <ul className="flex justify-between">
+        <nav className="w-full bg-[#d1d1e9] text-headline-light p-4 relative">
+            <ul className="flex justify-between relative">
                 <li className="font-bold text-xl"><Link to="/">Out of the Chat</Link></li>
-                {pathsToHideLogin.includes(pathName) ? null : <li>{ user ? <img className="w-7 h-7 rounded-full" src={user.photoURL ?? ''} alt="" /> : <Link to="/login">Login</Link>}</li>}
+                <div className="flex gap-4">
+                    <li className="hidden">Trips</li>
+                    {pathsToHideLogin.includes(pathName) ? null : <li onClick={onProfileClicked}>{ user ? <img className="w-7 h-7 rounded-full" src={user.photoURL ?? ''} alt="" /> : <Link to="/login">Login</Link>}</li>}
+                </div>
             </ul>
+            {showExtendedMenu && user ? <ExtendedMenu /> : null}
         </nav>
     )
 }
