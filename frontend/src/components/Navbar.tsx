@@ -57,7 +57,7 @@ const Navbar = () => {
                 <li className="font-bold text-xl"><Link to="/">Out of the Chat</Link></li>
                 <div className="flex gap-4">
                     <li className="hidden">Trips</li>
-                    {pathsToHideLogin.includes(pathName) ? null : <li onClick={onProfileClicked}>{user && user.photoURL ? <img className="w-7 h-7 rounded-full" src={user.photoURL} alt="user profile picture" referrerPolicy="no-referrer" /> : <Link to="/login">Login</Link>}</li>}
+                    {pathsToHideLogin.includes(pathName) ? null : <li className="hover:cursor-pointer" onClick={onProfileClicked}>{user && user.photoURL ? <img className="w-7 h-7 rounded-full" src={user.photoURL} alt="user profile picture" referrerPolicy="no-referrer" /> : <Link to="/login">Login</Link>}</li>}
                 </div>
             </ul>
             {showExtendedMenu && user ? <ExtendedMenu /> : null}
