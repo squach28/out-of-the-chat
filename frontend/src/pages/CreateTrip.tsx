@@ -53,7 +53,7 @@ const TripNameForm = (formProps: FormProps) => {
     }
 
     return (
-        <form className="flex flex-col gap-3 mt-8 md:min-w-[550px] md:p-8 md:mx-auto md:shadow-md md:rounded-lg md:border">
+        <form className="flex flex-col gap-3">
             <div className="flex gap-2">
                 <label htmlFor="name">Trip Name</label>
                 {error ? <p className="text-red-400">{error}</p> : null}
