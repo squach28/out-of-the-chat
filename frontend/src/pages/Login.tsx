@@ -6,7 +6,6 @@ import checkSolidIcon from '../assets/icons/check-solid.svg'
 
 const Login = () => {
     const [searchParams, ] = useSearchParams()
-    console.log(searchParams.get('initialLogin'))
     return (
         <div className="flex flex-col">
             {
@@ -16,6 +15,14 @@ const Login = () => {
                 </div> 
                 : 
                 null
+            }
+            {
+                searchParams.get('logOut') ?
+                <div className="w-[90%] absolute bottom-[2%] right-[50%] translate-x-[50%]">
+                    <Toast iconImg={checkSolidIcon} title="Success!" content="Log out successful" />
+                </div> 
+                : 
+                null                    
             }
             <Navbar />
             <LoginForm />
