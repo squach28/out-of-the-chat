@@ -16,8 +16,6 @@ const Trips = () => {
                 fetch(`${import.meta.env.VITE_API_URL}/trips?uid=${user.uid}`)
                     .then(res => res.json())
                     .then(data => setTrips(data))
-            } else {
-                navigate('/login', { replace: true })
             }
         })
     }, [navigate])

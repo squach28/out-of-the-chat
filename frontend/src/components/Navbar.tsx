@@ -8,11 +8,12 @@ const ExtendedMenu = () => {
 
     const auth = getAuth()
     const navigate = useNavigate()
-
     const logOut = () => {
         try {
             auth.signOut()
-            navigate('/login?logOut=true', { replace: true })
+                .then(() => {
+                    navigate('/login?logOut=success', { replace: true })
+                })
         } catch(e) {
             console.log(e)
         }
