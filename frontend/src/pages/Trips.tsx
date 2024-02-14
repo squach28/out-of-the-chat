@@ -4,6 +4,7 @@ import { Trip } from "../types/Trip"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { Link, useNavigate } from "react-router-dom"
 import plusIcon from '../assets/icons/plus-solid.svg'
+import TripCard from "../components/TripCard"
 
 const Trips = () => {
     const [trips, setTrips] = useState<Trip[] | null>(null)
@@ -31,8 +32,12 @@ const Trips = () => {
                     </Link>
                 </div>
                 { trips ? 
-                    <ul>
-                        {trips.map(trip => <li key={trip.id}>{trip.name}</li>)}
+                    <ul className="flex flex-col gap-4 py-4">
+                        {trips.map(trip => 
+                            <li key={trip.id}>
+                                <TripCard  trip={trip} />
+                            </li>
+                        )}
                     </ul>
                 : 
                     <p>Loading...</p>

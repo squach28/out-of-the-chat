@@ -1,4 +1,4 @@
-import { Restaurant } from "./Restuarant,"
+import { Restaurant } from "./Restuarant"
 import { Hotel } from "./Hotel"
 import { Attraction } from "./Attraction"
 
