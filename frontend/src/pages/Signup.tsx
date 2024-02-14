@@ -6,7 +6,7 @@ const Signup = () => {
     <div className="flex flex-col bg-background-light">
         <Navbar />
         <SignupForm />
-        <p className="text-center">Already have an account? <Link to="/login" replace={true} className="font-bold">Log in</Link></p>
+        <p className="text-center mt-6">Already have an account? <Link to="/login" replace={true} className="font-bold">Log in</Link></p>
     </div>
   )
 }

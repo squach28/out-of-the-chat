@@ -135,7 +135,7 @@ const LoginForm = () => {
     }
 
     return (
-        <form className="flex flex-col p-4 gap-2" action="">
+        <form className="flex flex-1 flex-col p-4 gap-2 mt-8 md:min-w-[550px] md:p-8 md:mx-auto md:shadow-md md:rounded-lg md:border">
             <h1 className="text-3xl font-bold my-2">Login</h1>
             <div className="flex flex-row gap-3">
                 <label htmlFor="email" className="font-bold">Email</label>
