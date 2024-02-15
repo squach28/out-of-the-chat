@@ -25,6 +25,9 @@ const ExtendedMenu = () => {
                 <Link className="w-full block" to={`/trips`}>Trips</Link>
             </li>
             <li className="w-full">
+                <Link className="w-full block" to={`/settings`}>Settings</Link>
+            </li>
+            <li className="w-full">
                 <button className="w-full block" onClick={logOut}>Log out</button>
             </li>
         </ul>

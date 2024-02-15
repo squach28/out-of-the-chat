@@ -10,6 +10,7 @@ import Home from './pages/Home.tsx'
 import CreateTrip from './pages/CreateTrip.tsx'
 import Trips from './pages/Trips.tsx'
 import Trip from './pages/Trip.tsx'
+import Settings from './pages/Settings.tsx'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
   {
     path: '/accountSetup',
     element: <AccountSetup />
+  },
+  {
+    path: '/settings',
+    element: <Settings />
   },
   {
     path: '/createTrip',
