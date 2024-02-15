@@ -39,7 +39,7 @@ const Navbar = () => {
     const auth = getAuth()
     const location = useLocation()
     const pathName = location.pathname
-    const pathsToHideLogin = [ '/signup', '/login', '/forgotPassword']
+    const pathsToHideLogin = [ '/signup', '/login', '/forgotPassword', '/settings']
     const [showExtendedMenu, setShowExtendedMenu] = useState<boolean>(false)
 
     useEffect(() => {
