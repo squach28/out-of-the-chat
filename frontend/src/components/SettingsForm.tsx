@@ -1,9 +1,15 @@
 import { User, getAuth, onAuthStateChanged } from "firebase/auth"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
+import { UserSettings } from "../types/UserSettings"
 
 const SettingsForm = () => {
     const [user, setUser] = useState<User | null>(null)
     const [photo, setPhoto] = useState<string>('')
+    const [changes, setChanges] = useState<UserSettings>({
+        firstName: '',
+        lastName: '',
+        email: ''
+    })
 
     useEffect(() => {
         const auth = getAuth()
@@ -11,6 +17,12 @@ const SettingsForm = () => {
         onAuthStateChanged(auth, (user) => {
             if(user) {
                 setUser(user)
+                console.log(user.displayName!.split(' ')[1])
+                setChanges({
+                    firstName: user.displayName!.split(' ')[0],
+                    lastName: user.displayName!.split(' ')[1],
+                    email: user.email!
+                })
             }
         })
 
@@ -35,6 +47,13 @@ const SettingsForm = () => {
         }
     }
 
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setChanges({
+            ...changes,
+            [e.target.name]: e.target.value
+        })
+    }
+
     return (
         user ? 
             <form className="flex flex-col gap-2 mt-8">
@@ -43,11 +62,11 @@ const SettingsForm = () => {
                     <img className="w-24 h-24 mx-auto opacity-1 rounded-full hover:cursor-pointer" src={user.photoURL ?? ''} alt="" />
                 </div>
                 <label htmlFor="firstName">First Name</label>
-                <input className="border p-1" id="firstName" type="text" placeholder="First Name" value={user.displayName?.split(' ')[0] ?? ''} />
+                <input className="border p-1" id="firstName" name="firstName" type="text" placeholder="First Name" onChange={onChange} value={changes.firstName ?? ''} />
                 <label htmlFor="lastName">Last Name</label>
-                <input className="border p-1" id="lastName" type="text" placeholder="Last Name" value={user.displayName?.split(' ')[1] ?? ''} />
+                <input className="border p-1" id="lastName" name="lastName" type="text" placeholder="Last Name" onChange={onChange} value={changes.lastName ?? ''} />
                 <label htmlFor="email">Email</label>
-                <input className="border p-1" id="email" type="email" placeholder="First Name" value={user.email ?? ''} />
+                <input className="border p-1" id="email" name="email" type="email" placeholder="First Name" onChange={onChange} value={changes.email ?? ''} />
                 <button className="font-bold rounded-md shadow-md px-1 py-2 my-2 bg-button-light text-button-text-light">Save Changes</button>
             </form>
         :
