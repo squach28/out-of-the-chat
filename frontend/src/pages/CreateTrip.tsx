@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react"
 import Navbar from "../components/Navbar"
 import { TripCreation } from "../types/TripCreation"
 import validator from "validator"
-import { getAuth } from "firebase/auth"
+import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
+import { useDebounce } from "../hooks/useDebounce"
 
 type FormProps = {
     value?: string
@@ -69,15 +70,34 @@ const TripLocationForm = (formProps: FormProps) => {
     const [location, setLocation] = useState<string>(formProps.value ?? '')
     const [error, setError] = useState<string>('')
     const [suggested, setSuggested] = useState([])
+    const debouncedSearch = useDebounce(location)
+
     useEffect(() => {
-        const fetchPlacesByText = (text: string) => {
-            fetch(`${import.meta.env.VITE_API_URL}/places?text=${text}`)
-                .then(res => res.json())
-                .then(places => setSuggested(places))
+        const fetchPlacesByText = async (text: string): Promise<any> => {
+            try {
+                const data = await fetch(`${import.meta.env.VITE_API_URL}/places?text=${text}`)
+                const places = await data.json()
+                return places
+            } catch(e) {
+                console.log(e)
+            }
         }
-        fetchPlacesByText(location)
-    }, [location])
-    console.log(suggested)
+
+        const fetchPlaces = () => {
+            fetchPlacesByText(debouncedSearch)
+                .then(data => {
+                    setSuggested(data)
+                })
+        }
+
+        if(debouncedSearch !== '') {
+            fetchPlaces()
+        } else {
+            setSuggested([])
+        }
+
+    }, [debouncedSearch])
+
     const validateLocation = (location: string) => {
         if(validator.isEmpty(location)) {
             return false
@@ -115,6 +135,7 @@ const TripLocationForm = (formProps: FormProps) => {
                 {error ? <p className="text-red-400">{error}</p> : null}
             </div>
             <input className="border p-1" autoFocus={true} type="text" onChange={onLocationChange} onBlur={onLocationBlur} value={location} placeholder="Trip Location"/>
+            {suggested ? suggested.map(place => <p key={place}>{place}</p>) : null}
             <div className="flex gap-1 ml-auto">
                 <button className="bg-gray-400 text-button-text-light px-3 py-2 rounded-lg" onClick={formProps.previousStep}>Back</button>
                 <button className="bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={onContinueClicked}>Continue</button>
@@ -284,17 +305,20 @@ const CreateTrip = () => {
 
     useEffect(() => {
         const auth = getAuth()
-        if(auth.currentUser !== null) {
-            const user = auth.currentUser
-            setTrip(prev => {
-                return {
-                    ...prev,
-                    createdBy: user.uid
-                }
-            })
-        } else {
-            navigate('/login', { replace: true })
-        }
+        onAuthStateChanged(auth, (user) => {
+            if(user !== null) {
+                setTrip(prev => {
+                    return {
+                        ...prev,
+                        createdBy: user.uid
+                    }
+                })
+            } else {
+                console.log(auth.currentUser)
+                navigate('/login', { replace: true })
+            }
+        })
+
     }, [navigate])
 
     const editTrip = (name: string, value: string) => {
