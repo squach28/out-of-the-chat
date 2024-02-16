@@ -2,6 +2,10 @@ import { useParams } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import { useEffect, useState } from "react"
 import { Trip } from "../types/Trip"
+import Attractions from "../components/Attractions"
+import Itinerary from "../components/Itinerary"
+import Restaurants from "../components/Restaurants"
+import Hotels from "../components/Hotels"
 
 enum TripDetailsView {
     ITINERARY,
@@ -39,6 +43,21 @@ const TripDetails = () => {
                 return
         }
     }
+
+    const renderCategoryComponent = () => {
+        switch(selected) {
+            case TripDetailsView.ITINERARY:
+                return <Itinerary />
+            case TripDetailsView.ATTRACTIONS:
+                return <Attractions />
+            case TripDetailsView.RESTAURANTS:
+                return <Restaurants />
+            case TripDetailsView.HOTELS:
+                return <Hotels />                              
+            default:
+                return null
+        }
+    }
     
     return (
         <div>
@@ -48,11 +67,12 @@ const TripDetails = () => {
                     <div>
                         <h1 className="text-4xl font-bold">{trip.name}</h1>
                         <ul className="flex justify-between my-4">
-                            <li className={`${selected === TripDetailsView.ITINERARY ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md`} id="itinerary" onClick={onTripDetailsViewClicked}>Itinerary</li>
-                            <li className={`${selected === TripDetailsView.ATTRACTIONS ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md`} id="attractions" onClick={onTripDetailsViewClicked}>Attractions</li>
-                            <li className={`${selected === TripDetailsView.RESTAURANTS ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md`} id="restaurants" onClick={onTripDetailsViewClicked}>Restaurants</li>
-                            <li className={`${selected === TripDetailsView.HOTELS ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md`} id="hotels" onClick={onTripDetailsViewClicked}>Hotels</li>
+                            <li className={`${selected === TripDetailsView.ITINERARY ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="itinerary" onClick={onTripDetailsViewClicked}>Itinerary</li>
+                            <li className={`${selected === TripDetailsView.ATTRACTIONS ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="attractions" onClick={onTripDetailsViewClicked}>Attractions</li>
+                            <li className={`${selected === TripDetailsView.RESTAURANTS ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="restaurants" onClick={onTripDetailsViewClicked}>Restaurants</li>
+                            <li className={`${selected === TripDetailsView.HOTELS ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="hotels" onClick={onTripDetailsViewClicked}>Hotels</li>
                         </ul>
+                        {renderCategoryComponent()}
                     </div> 
                     : 
                     null
