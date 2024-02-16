@@ -68,7 +68,16 @@ const TripLocationForm = (formProps: FormProps) => {
 
     const [location, setLocation] = useState<string>(formProps.value ?? '')
     const [error, setError] = useState<string>('')
-
+    const [suggested, setSuggested] = useState([])
+    useEffect(() => {
+        const fetchPlacesByText = (text: string) => {
+            fetch(`${import.meta.env.VITE_API_URL}/places?text=${text}`)
+                .then(res => res.json())
+                .then(places => setSuggested(places))
+        }
+        fetchPlacesByText(location)
+    }, [location])
+    console.log(suggested)
     const validateLocation = (location: string) => {
         if(validator.isEmpty(location)) {
             return false
