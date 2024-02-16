@@ -9,6 +9,7 @@ import dotenv from 'dotenv'
 import tripRouter from './routes/tripRoutes'
 import userRouter from './routes/userRouter'
 import fileUpload from 'express-fileupload'
+import placesRouter from './routes/placesRoutes'
 dotenv.config()
 
 const PORT = process.env.PORT ?? 4000
@@ -21,6 +22,7 @@ app.use(bodyParser.json())
 app.use('/auth', authRouter)
 app.use('/trips', tripRouter)
 app.use('/users', userRouter)
+app.use('/places', placesRouter)
 
 app.get('/', (req, res) => {
   res.send('hello')
