@@ -65,44 +65,69 @@ const TripNameForm = (formProps: FormProps) => {
     )
 }
 
+type SuggestedPlacesListProps = {
+    places: string[]
+    onSuggestedPlaceClicked: (place: string) => void
+}
+
+const SuggestedPlacesList = (suggestedPlacesListProps: SuggestedPlacesListProps) => {
+    return(
+        <ul className="absolute mr-4 flex flex-col gap-2 bg-gray-200">
+            {suggestedPlacesListProps.places.map(place => {
+                return(
+                    <li key={place} className="p-1 hover:cursor-pointer" onClick={() => { suggestedPlacesListProps.onSuggestedPlaceClicked(place)}}>
+                        {place}
+                    </li>
+                )
+            })}
+        </ul>
+    )
+}
+
 const TripLocationForm = (formProps: FormProps) => {
 
     const [location, setLocation] = useState<string>(formProps.value ?? '')
     const [error, setError] = useState<string>('')
-    const [suggested, setSuggested] = useState([])
+    const [suggested, setSuggested] = useState<string[] | null>([])
+    const [suggestedLoading, setSuggestedLoading] = useState<boolean>(false)
+    const [autocomplete, setAutocomplete] = useState<boolean>(true)
     const debouncedSearch = useDebounce(location)
 
     useEffect(() => {
-        const fetchPlacesByText = async (text: string): Promise<any> => {
+        const fetchPlacesByText = async (text: string): Promise<string[]> => {
             try {
                 const data = await fetch(`${import.meta.env.VITE_API_URL}/places?text=${text}`)
                 const places = await data.json()
                 return places
             } catch(e) {
                 console.log(e)
+                return []
             }
         }
 
         const fetchPlaces = () => {
+            setSuggestedLoading(true)
             fetchPlacesByText(debouncedSearch)
                 .then(data => {
                     setSuggested(data)
                 })
+                .finally(() => {
+                    setSuggestedLoading(false)
+                })
         }
 
-        if(debouncedSearch !== '') {
+        if(debouncedSearch !== '' && autocomplete) {
             fetchPlaces()
         } else {
             setSuggested([])
         }
 
-    }, [debouncedSearch])
+    }, [debouncedSearch, autocomplete])
 
     const validateLocation = (location: string) => {
         if(validator.isEmpty(location)) {
             return false
         }
-
         return true
     }
 
@@ -119,6 +144,7 @@ const TripLocationForm = (formProps: FormProps) => {
 
     const onLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLocation(e.target.value)
+        setAutocomplete(true)
         setError('')
     }
 
@@ -128,14 +154,22 @@ const TripLocationForm = (formProps: FormProps) => {
         }
     }
 
+    const onSuggestedPlaceClicked = (place: string) => {
+        setLocation(place)
+        setAutocomplete(false)
+    }
+
     return (
         <form className="flex flex-col gap-3">
             <div className="flex gap-2">
                 <label>Trip Location</label>
                 {error ? <p className="text-red-400">{error}</p> : null}
             </div>
-            <input className="border p-1" autoFocus={true} type="text" onChange={onLocationChange} onBlur={onLocationBlur} value={location} placeholder="Trip Location"/>
-            {suggested ? suggested.map(place => <p key={place}>{place}</p>) : null}
+            <div>
+                <input className="w-full border p-1 relative" autoFocus={true} type="text" onChange={onLocationChange} onBlur={onLocationBlur} value={location} placeholder="Trip Location"/>
+                {/* TODO: add a spinner for when suggested is loading places */}
+                {suggested && autocomplete ? <SuggestedPlacesList places={suggested} onSuggestedPlaceClicked={onSuggestedPlaceClicked} /> : null}
+            </div>
             <div className="flex gap-1 ml-auto">
                 <button className="bg-gray-400 text-button-text-light px-3 py-2 rounded-lg" onClick={formProps.previousStep}>Back</button>
                 <button className="bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={onContinueClicked}>Continue</button>
