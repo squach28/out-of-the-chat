@@ -165,9 +165,9 @@ const TripLocationForm = (formProps: FormProps) => {
                 <label>Trip Location</label>
                 {error ? <p className="text-red-400">{error}</p> : null}
             </div>
-            <div>
+            <div className="relative">
                 <input className="w-full border p-1 relative" autoFocus={true} type="text" onChange={onLocationChange} onBlur={onLocationBlur} value={location} placeholder="Trip Location"/>
-                {/* TODO: add a spinner for when suggested is loading places */}
+                {suggestedLoading ? <p className="absolute right-0 top-1">loading...</p> : null}
                 {suggested && autocomplete ? <SuggestedPlacesList places={suggested} onSuggestedPlaceClicked={onSuggestedPlaceClicked} /> : null}
             </div>
             <div className="flex gap-1 ml-auto">
