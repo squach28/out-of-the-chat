@@ -5,6 +5,7 @@ import validator from "validator"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
 import { useDebounce } from "../hooks/useDebounce"
+import Spinner from "../components/Spinner"
 
 type FormProps = {
     value?: string
@@ -167,7 +168,12 @@ const TripLocationForm = (formProps: FormProps) => {
             </div>
             <div className="relative">
                 <input className="w-full border p-1 relative" autoFocus={true} type="text" onChange={onLocationChange} onBlur={onLocationBlur} value={location} placeholder="Trip Location"/>
-                {suggestedLoading ? <p className="absolute right-0 top-1">loading...</p> : null}
+                {suggestedLoading ? 
+                    <div className="absolute right-2 top-2 w-4 h-4">
+                        <Spinner />
+                    </div>
+                : null
+                }
                 {suggested && autocomplete ? <SuggestedPlacesList places={suggested} onSuggestedPlaceClicked={onSuggestedPlaceClicked} /> : null}
             </div>
             <div className="flex gap-1 ml-auto">
