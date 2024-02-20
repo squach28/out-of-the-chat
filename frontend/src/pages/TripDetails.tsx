@@ -6,8 +6,10 @@ import Attractions from "../components/Attractions"
 import Itinerary from "../components/Itinerary"
 import Restaurants from "../components/Restaurants"
 import Hotels from "../components/Hotels"
+import Feed from "../components/Feed"
 
 enum TripDetailsView {
+    FEED,
     ITINERARY,
     ATTRACTIONS,
     RESTAURANTS,
@@ -27,6 +29,9 @@ const TripDetails = () => {
     const onTripDetailsViewClicked = (e: React.MouseEvent<HTMLLIElement>) => {
         const target = e.target as HTMLLIElement
         switch(target.id) {
+            case 'feed':
+                setSelected(TripDetailsView.FEED)
+                return                
             case 'itinerary':
                 setSelected(TripDetailsView.ITINERARY)
                 return
@@ -46,6 +51,8 @@ const TripDetails = () => {
 
     const renderCategoryComponent = () => {
         switch(selected) {
+            case TripDetailsView.FEED:
+                return <Feed />
             case TripDetailsView.ITINERARY:
                 return <Itinerary />
             case TripDetailsView.ATTRACTIONS:
@@ -67,6 +74,7 @@ const TripDetails = () => {
                     <div>
                         <h1 className="text-4xl font-bold">{trip.name}</h1>
                         <ul className="flex justify-between my-4">
+                            <li className={`${selected === TripDetailsView.FEED ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="feed" onClick={onTripDetailsViewClicked}>Feed</li>
                             <li className={`${selected === TripDetailsView.ITINERARY ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="itinerary" onClick={onTripDetailsViewClicked}>Itinerary</li>
                             <li className={`${selected === TripDetailsView.ATTRACTIONS ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="attractions" onClick={onTripDetailsViewClicked}>Attractions</li>
                             <li className={`${selected === TripDetailsView.RESTAURANTS ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="restaurants" onClick={onTripDetailsViewClicked}>Restaurants</li>
