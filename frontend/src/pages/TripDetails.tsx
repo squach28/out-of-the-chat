@@ -68,7 +68,7 @@ const TripDetails = () => {
     }
     
     return (
-        <div>
+        <div className="overflow-x-hidden">
             <div className="p-4">
                 {trip ? 
                     <div>

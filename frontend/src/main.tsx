@@ -12,7 +12,7 @@ import Settings from './pages/Settings.tsx'
 import TripDetails from './pages/TripDetails.tsx'
 import AddAttraction from './pages/AddAttraction.tsx'
 import Root from './pages/Root.tsx'
-import { Trip } from './types/Trip.ts'
+import { Crumb } from './types/Crumb.ts'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -66,12 +66,12 @@ const router = createBrowserRouter([
             path: '/trips/:id',
             element: <TripDetails />,
             handle: {
-              crumb: (data: Trip) => <Link className='text-blue-800' to={`/trips/${data.id}`}>{data.name}</Link>
+              crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to={`/trips/${crumb.data.id}`}>{crumb.data.name}</Link>
             }
           },
         ],
         handle: {
-          crumb: () => <Link className='text-blue-800' to="/trips">Trips</Link>
+          crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to="/trips">Trips</Link>
         }
       },
       {
