@@ -1,16 +1,18 @@
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import { initializeApp } from 'firebase/app'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { Link, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Login from './pages/Login.tsx'
 import Signup from './pages/Signup.tsx'
 import ForgotPassword from './pages/ForgotPassword.tsx'
 import AccountSetup from './pages/AccountSetup.tsx'
-import Home from './pages/Home.tsx'
 import CreateTrip from './pages/CreateTrip.tsx'
 import Trips from './pages/Trips.tsx'
 import Settings from './pages/Settings.tsx'
 import TripDetails from './pages/TripDetails.tsx'
+import AddAttraction from './pages/AddAttraction.tsx'
+import Root from './pages/Root.tsx'
+import { Trip } from './types/Trip.ts'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -27,39 +29,59 @@ initializeApp(firebaseConfig)
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Home />,
-  },
-  {
-    path: '/login',
-    element: <Login />
-  },
-  {
-    path: '/signup',
-    element: <Signup />
-  },
-  {
-    path: '/forgotPassword',
-    element: <ForgotPassword />
-  },
-  {
-    path: '/accountSetup',
-    element: <AccountSetup />
-  },
-  {
-    path: '/settings',
-    element: <Settings />
-  },
-  {
-    path: '/createTrip',
-    element: <CreateTrip />
-  },
-  {
-    path: '/trips',
-    element: <Trips />
-  },
-  {
-    path: '/trips/:id',
-    element: <TripDetails />
+    element: <Root />,
+    children: [
+      {
+        path: 'login',
+        element: <Login />
+      },
+      {
+        path: '/signup',
+        element: <Signup />
+      },
+      {
+        path: '/forgotPassword',
+        element: <ForgotPassword />
+      },
+      {
+        path: '/accountSetup',
+        element: <AccountSetup />
+      },
+      {
+        path: '/settings',
+        element: <Settings />
+      },
+      {
+        path: '/createTrip',
+        element: <CreateTrip />
+      },
+      {
+        path: '/trips',
+        children: [
+          {
+            index: true,
+            element: <Trips />
+          },
+          {
+            path: '/trips/:id',
+            element: <TripDetails />,
+            handle: {
+              crumb: (data: Trip) => <Link className='text-blue-800' to={`/trips/${data.id}`}>{data.name}</Link>
+            }
+          },
+        ],
+        handle: {
+          crumb: () => <Link className='text-blue-800' to="/trips">Trips</Link>
+        }
+      },
+      {
+        path: '/trips/:id/addAttraction',
+        element: <AddAttraction />,
+        handle: {
+          crumb: () => 'Add Attraction'
+        }
+      }
+    ]
   }
 ])
 

@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom"
-import Navbar from "../components/Navbar"
 import { useEffect, useState } from "react"
 import { Trip } from "../types/Trip"
 import Attractions from "../components/Attractions"
@@ -7,6 +6,7 @@ import Itinerary from "../components/Itinerary"
 import Restaurants from "../components/Restaurants"
 import Hotels from "../components/Hotels"
 import Feed from "../components/Feed"
+import Breadcrumbs from "../components/Breadcrumbs"
 
 enum TripDetailsView {
     FEED,
@@ -20,6 +20,7 @@ const TripDetails = () => {
     const { id } = useParams()
     const [trip ,setTrip] = useState<Trip | null>(null)
     const [selected, setSelected] = useState<TripDetailsView>(TripDetailsView.ITINERARY)
+
     useEffect(() => {
         fetch(`${import.meta.env.VITE_API_URL}/trips/${id}`)
             .then(res => res.json())
@@ -35,7 +36,7 @@ const TripDetails = () => {
             case 'itinerary':
                 setSelected(TripDetailsView.ITINERARY)
                 return
-            case 'hotels':
+            case 'hotels': 
                 setSelected(TripDetailsView.HOTELS)
                 return
             case 'attractions':
@@ -56,7 +57,7 @@ const TripDetails = () => {
             case TripDetailsView.ITINERARY:
                 return <Itinerary />
             case TripDetailsView.ATTRACTIONS:
-                return <Attractions />
+                return <Attractions tripId={id as string} />
             case TripDetailsView.RESTAURANTS:
                 return <Restaurants />
             case TripDetailsView.HOTELS:
@@ -68,10 +69,10 @@ const TripDetails = () => {
     
     return (
         <div>
-            <Navbar />
             <div className="p-4">
                 {trip ? 
                     <div>
+                        <Breadcrumbs data={trip} />
                         <h1 className="text-4xl font-bold">{trip.name}</h1>
                         <ul className="flex justify-between my-4">
                             <li className={`${selected === TripDetailsView.FEED ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="feed" onClick={onTripDetailsViewClicked}>Feed</li>

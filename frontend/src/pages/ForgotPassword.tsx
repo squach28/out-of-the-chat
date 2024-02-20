@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom"
-import Navbar from "../components/Navbar"
 import { useState } from "react"
 import validator from "validator"
 import verifyEmailImg from '../assets/images/verifyEmail.svg'
@@ -55,7 +54,6 @@ const ForgotPassword = () => {
 
     return (
         <div>
-            <Navbar />
             {success ?
                 <div className="flex flex-col justify-center items-center gap-2 p-4 mt-8">
                     <p className="text-4xl font-bold text-center">Success!</p>

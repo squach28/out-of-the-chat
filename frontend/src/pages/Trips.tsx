@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import Navbar from "../components/Navbar"
 import { Trip } from "../types/Trip"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { Link, useNavigate } from "react-router-dom"
@@ -22,7 +21,6 @@ const Trips = () => {
     }, [navigate])
     return (
         <div>
-            <Navbar />
             <div className="p-4">
                 <div className="flex justify-between">
                     <h1 className="text-3xl font-bold">Your Trips</h1>
@@ -35,7 +33,7 @@ const Trips = () => {
                     <ul className="flex flex-col gap-4 py-4">
                         {trips.map(trip => 
                             <li key={trip.id}>
-                                <TripCard  trip={trip} />
+                                <TripCard trip={trip} />
                             </li>
                         )}
                     </ul>

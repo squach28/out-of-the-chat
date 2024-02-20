@@ -1,6 +1,5 @@
 import { useSearchParams } from "react-router-dom"
 import LoginForm from "../components/LoginForm"
-import Navbar from "../components/Navbar"
 import Toast from "../components/Toast"
 import checkSolidIcon from '../assets/icons/check-solid.svg'
 
@@ -24,7 +23,6 @@ const Login = () => {
                 : 
                 null                    
             }
-            <Navbar />
             <LoginForm />
          </div>
     )

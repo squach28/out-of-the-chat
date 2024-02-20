@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react"
-import Navbar from "../components/Navbar"
 import { TripCreation } from "../types/TripCreation"
 import validator from "validator"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
@@ -417,7 +416,6 @@ const CreateTrip = () => {
 
     return (
         <div>
-            <Navbar />
             <div className="flex flex-col gap-3 p-4">
                 <h1 className="text-2xl font-bold">Create a Trip</h1>
                 {renderCreateTripStep()}

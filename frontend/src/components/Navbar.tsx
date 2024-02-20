@@ -2,13 +2,15 @@ import { User, getAuth, onAuthStateChanged } from "firebase/auth"
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 
+type ExtendedMenuProps = {
+    hideMenu: () => void
+}
 
-
-const ExtendedMenu = () => {
-
+const ExtendedMenu = (extendedMenuProps: ExtendedMenuProps) => {
     const auth = getAuth()
     const navigate = useNavigate()
     const logOut = () => {
+        extendedMenuProps.hideMenu()
         try {
             auth.signOut()
                 .then(() => {
@@ -22,10 +24,10 @@ const ExtendedMenu = () => {
     return(
         <ul className="absolute w-full left-0 top-[100%] p-2 text-center bg-gray-500">
             <li className="w-full">
-                <Link className="w-full block" to={`/trips`}>Trips</Link>
+                <Link className="w-full block" to={`/trips`} onClick={extendedMenuProps.hideMenu}>Trips</Link>
             </li>
             <li className="w-full">
-                <Link className="w-full block" to={`/settings`}>Settings</Link>
+                <Link className="w-full block" to={`/settings`} onClick={extendedMenuProps.hideMenu}>Settings</Link>
             </li>
             <li className="w-full">
                 <button className="w-full block" onClick={logOut}>Log out</button>
@@ -46,12 +48,18 @@ const Navbar = () => {
         onAuthStateChanged(auth, (user) => {
             if(user) {
                 setUser(user)
+            } else {
+                setUser(null)
             }
         })
     }, [auth])
 
     const onProfileClicked = () => {
         setShowExtendedMenu(prev => !prev)
+    }
+
+    const hideExtendedMenu = () => {
+        setShowExtendedMenu(false)
     }
 
     return (
@@ -63,7 +71,7 @@ const Navbar = () => {
                     {pathsToHideLogin.includes(pathName) ? null : <li className="hover:cursor-pointer" onClick={onProfileClicked}>{user && user.photoURL ? <img className="w-7 h-7 rounded-full" src={user.photoURL} alt="user profile picture" referrerPolicy="no-referrer" /> : <Link to="/login">Login</Link>}</li>}
                 </div>
             </ul>
-            {showExtendedMenu && user ? <ExtendedMenu /> : null}
+            {showExtendedMenu && user ? <ExtendedMenu hideMenu={hideExtendedMenu} /> : null}
         </nav>
     )
 }
