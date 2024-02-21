@@ -10,9 +10,14 @@ import CreateTrip from './pages/CreateTrip.tsx'
 import Trips from './pages/Trips.tsx'
 import Settings from './pages/Settings.tsx'
 import TripDetails from './pages/TripDetails.tsx'
-import AddAttraction from './pages/AddAttraction.tsx'
 import Root from './pages/Root.tsx'
 import { Crumb } from './types/Crumb.ts'
+import Feed from './components/Feed.tsx'
+import Itinerary from './components/Itinerary.tsx'
+import Attractions from './components/Attractions.tsx'
+import Restaurants from './components/Restaurants.tsx'
+import Hotels from './components/Hotels.tsx'
+import AddAttraction from './pages/AddAttraction.tsx'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -65,22 +70,46 @@ const router = createBrowserRouter([
           {
             path: '/trips/:id',
             element: <TripDetails />,
+            children: [ 
+              {
+                path: '/trips/:id/feed',
+                element: <Feed />
+              },
+              {
+                path: '/trips/:id/itinerary',
+                element: <Itinerary />
+              },
+              {
+                path: '/trips/:id/attractions',
+                element: <Attractions />,
+                handle: {
+                  crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to={`/trips/${crumb.data.id}`}>Attractions</Link>
+                }
+              },
+              {
+                path: '/trips/:id/addAttraction',
+                element: <AddAttraction />
+              },
+              {
+                path: '/trips/:id/restaurants',
+                element: <Restaurants />
+              },
+              {
+                path: '/trips/:id/hotels',
+                element: <Hotels />
+              },
+            ],
             handle: {
               crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to={`/trips/${crumb.data.id}`}>{crumb.data.name}</Link>
             }
           },
+
         ],
         handle: {
           crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to="/trips">Trips</Link>
         }
       },
-      {
-        path: '/trips/:id/addAttraction',
-        element: <AddAttraction />,
-        handle: {
-          crumb: () => 'Add Attraction'
-        }
-      }
+
     ]
   }
 ])

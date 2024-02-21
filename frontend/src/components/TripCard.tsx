@@ -12,7 +12,7 @@ const TripCard = (tripCardProps: TripCardProps) => {
 
     const navigateToTripPage = () => {
         const id = tripCardProps.trip.id
-        navigate(`/trips/${id}`)
+        navigate(`/trips/${id}/feed`)
     }   
 
     return (

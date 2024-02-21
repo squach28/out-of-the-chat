@@ -37,13 +37,13 @@ const Breadcrumbs = (breadcrumbsProps: BreadcrumbsProps) => {
       <ul className="flex gap-2">
         {breadcrumbs.map((crumb, index, arr) => {
           if(index === arr.length - 1) {
-            return crumb
+            return <li key={index}>{crumb}</li>
           } else {
             return(
-              <div className="flex">
-                {crumb}
-                <p className="pl-2">{'>'}</p>
-              </div>
+              <li key={index} className="flex">
+                  {crumb}
+                  <p className="pl-2">{'>'}</p>
+              </li>
             )
           }
         })}
