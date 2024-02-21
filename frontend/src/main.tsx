@@ -73,30 +73,45 @@ const router = createBrowserRouter([
             children: [ 
               {
                 path: '/trips/:id/feed',
-                element: <Feed />
+                element: <Feed />,
+                handle: {
+                  crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to={`/trips/${crumb.data.id}/feed`}>Feed</Link>
+                }
               },
               {
                 path: '/trips/:id/itinerary',
-                element: <Itinerary />
+                element: <Itinerary />,
+                handle: {
+                  crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to={`/trips/${crumb.data.id}/itinerary`}>Itinerary</Link>
+                }
               },
               {
                 path: '/trips/:id/attractions',
                 element: <Attractions />,
                 handle: {
-                  crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to={`/trips/${crumb.data.id}`}>Attractions</Link>
+                  crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to={`/trips/${crumb.data.id}/attractions`}>Attractions</Link>
                 }
               },
               {
-                path: '/trips/:id/addAttraction',
-                element: <AddAttraction />
+                path: '/trips/:id/attractions/addAttraction',
+                element: <AddAttraction />,
+                handle: {
+                  crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to={`/trips/${crumb.data.id}/attractions`}>Add Attraction</Link>
+                }
               },
               {
                 path: '/trips/:id/restaurants',
-                element: <Restaurants />
+                element: <Restaurants />,
+                handle: {
+                  crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to={`/trips/${crumb.data.id}/restaurants`}>Restaurants</Link>
+                }
               },
               {
                 path: '/trips/:id/hotels',
-                element: <Hotels />
+                element: <Hotels />,
+                handle: {
+                  crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to={`/trips/${crumb.data.id}/hotels`}>Hotels</Link>
+                }
               },
             ],
             handle: {
