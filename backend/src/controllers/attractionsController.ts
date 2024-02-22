@@ -9,7 +9,10 @@ const DB_NAME = 'trips'
 
 export const addAttraction = async (req: Request, res: Response): Promise<void> => {
   const tripId = req.query.tripId as string
-  const attraction = req.body
+  const attraction = {
+    ...req.body,
+    timestamp: new Date().toISOString()
+  }
   try {
     if (tripId === undefined) {
       res.status(400).json('Missing tripId')
