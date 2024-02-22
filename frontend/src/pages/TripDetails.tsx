@@ -37,11 +37,11 @@ const TripDetails = () => {
                         <h1 className="text-4xl font-bold">{trip.name}</h1>
                         <div className="md:grid md:grid-cols-6 md:grid-rows-1 md:gap-8">
                             <ul className="flex gap-2 md:flex-col my-4">
-                                <li className={`${getCurrentPage() === TripDetailsView.FEED ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="feed"><Link className="w-full inline-block" to={`/trips/${trip.id}/feed`}>Feed</Link></li>
-                                <li className={`${getCurrentPage()  === TripDetailsView.ITINERARY ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="itinerary"><Link className="w-full inline-block" to={`/trips/${trip.id}/itinerary`}>Itinerary</Link></li>
-                                <li className={`${getCurrentPage()  === TripDetailsView.ATTRACTIONS ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="attractions"><Link className="w-full inline-block" to={`/trips/${trip.id}/attractions`}>Attractions</Link></li>
-                                <li className={`${getCurrentPage()  === TripDetailsView.RESTAURANTS ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="restaurants"><Link className="w-full inline-block" to={`/trips/${trip.id}/restaurants`}>Restaurants</Link></li>
-                                <li className={`${getCurrentPage()  === TripDetailsView.HOTELS ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="hotels"><Link className="w-full inline-block" to={`/trips/${trip.id}/hotels`}>Hotels</Link></li>
+                                <li className={`${getCurrentPage() === TripDetailsView.FEED ? 'bg-green-200 font-bold' : 'bg-transparent'} rounded-md hover:cursor-pointer`} id="feed"><Link className="w-full inline-block p-2" to={`/trips/${trip.id}/feed`}>Feed</Link></li>
+                                <li className={`${getCurrentPage()  === TripDetailsView.ITINERARY ? 'bg-green-200 font-bold' : 'bg-transparent'} rounded-md hover:cursor-pointer`} id="itinerary"><Link className="w-full inline-block p-2" to={`/trips/${trip.id}/itinerary`}>Itinerary</Link></li>
+                                <li className={`${getCurrentPage()  === TripDetailsView.ATTRACTIONS ? 'bg-green-200 font-bold' : 'bg-transparent'} rounded-md hover:cursor-pointer`} id="attractions"><Link className="w-full inline-block p-2" to={`/trips/${trip.id}/attractions`}>Attractions</Link></li>
+                                <li className={`${getCurrentPage()  === TripDetailsView.RESTAURANTS ? 'bg-green-200 font-bold' : 'bg-transparent'} rounded-md hover:cursor-pointer`} id="restaurants"><Link className="w-full inline-block p-2" to={`/trips/${trip.id}/restaurants`}>Restaurants</Link></li>
+                                <li className={`${getCurrentPage()  === TripDetailsView.HOTELS ? 'bg-green-200 font-bold' : 'bg-transparent'} rounded-md hover:cursor-pointer`} id="hotels"><Link className="w-full inline-block p-2" to={`/trips/${trip.id}/hotels`}>Hotels</Link></li>
                             </ul>
                             <div className="md:grid md:col-span-5">
                                 <Outlet context={trip} />
