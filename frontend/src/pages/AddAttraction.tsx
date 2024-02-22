@@ -12,7 +12,6 @@ const AddAttraction = () => {
         name: '',
         description: '',
         price: 0,
-        timestamp: '',
         createdBy: auth.currentUser?.uid ?? ''
     })
 
