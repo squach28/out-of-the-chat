@@ -44,7 +44,7 @@ const TripDetails = () => {
                                 <li className={`${getCurrentPage()  === TripDetailsView.HOTELS ? 'bg-green-200 font-bold' : 'bg-transparent'} p-2 rounded-md hover:cursor-pointer`} id="hotels"><Link className="w-full inline-block" to={`/trips/${trip.id}/hotels`}>Hotels</Link></li>
                             </ul>
                             <div className="md:grid md:col-span-5">
-                                <Outlet />
+                                <Outlet context={trip} />
                             </div>
                         </div>
                     </div> 
