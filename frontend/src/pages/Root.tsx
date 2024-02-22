@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar"
 
 const Root = () => {
   return (
-    <div>
+    <div className="w-full min-h-screen relative">
         <Navbar />
         <Outlet />
     </div>

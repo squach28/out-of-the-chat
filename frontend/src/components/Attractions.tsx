@@ -1,17 +1,27 @@
 import { Link, useOutletContext, useParams } from "react-router-dom"
 import { Trip } from "../types/Trip"
 import { Attraction } from "../types/Attraction"
+import trashIcon from '../assets/icons/trash-solid.svg'
+import editIcon from '../assets/icons/pen-to-square-solid.svg'
+import exitIcon from '../assets/icons/xmark-solid.svg'
+import { useState } from "react"
+
 
 type AttractionCardProps = {
     attraction: Attraction
+    toggleEditModal: (attraction: Attraction) => void
 }
 
 const AttractionCard = (attractionCardProps: AttractionCardProps) => {
+
     return(
-        <div className="border p-2 shadow-md max-w-xlg rounded-md">
-            <div className="justify-between">
+        <div className={`flex flex-col border p-3 shadow-md max-w-xlg rounded-md`}>
+            <div className="flex justify-between">
                 <p className="text-2xl">{attractionCardProps.attraction.name}</p>
-                <img src="" alt="" />
+                <div className="flex gap-4">
+                    <img className="w-6 h-6 hover:cursor-pointer" src={editIcon} alt="edit" onClick={() => attractionCardProps.toggleEditModal(attractionCardProps.attraction)} />
+                    <img className="w-6 h-6 hover:cursor-pointer " src={trashIcon} alt="" />
+                </div>
             </div>
             <p>{attractionCardProps.attraction.description}</p>
             {attractionCardProps.attraction.url ? 
@@ -22,24 +32,69 @@ const AttractionCard = (attractionCardProps: AttractionCardProps) => {
                 null
             }
             <p>Price: <span>{attractionCardProps.attraction.price === 0 ? 'Free' : attractionCardProps.attraction.price}</span></p>
+            <button className="ml-auto mt-auto rounded-md shadow-md px-2 py-3 my-2 bg-button-light text-button-text-light">Add to Itinerary</button>
         </div>
+    )
+}
+
+type EditAttractionModal = {
+    attraction: Attraction
+    toggleEditModal: (attraction?: Attraction) => void
+}
+
+const EditAttractionModal = (editAttractionModal: EditAttractionModal) => {
+
+    return(
+        <form className="w-full h-3/4 md:w-1/2 md:h-1/2 flex flex-col gap-3 fixed bottom-[70%] left-[50%] translate-x-[-50%] translate-y-[50%] bg-gray-200 rounded-md shadow-lg p-4">
+            <div className="flex justify-between">
+                <h1 className="text-3xl">Edit Attraction</h1>
+                <img className="w-6 h-6 hover:cursor-pointer" src={exitIcon} alt="exit icon" onClick={() => editAttractionModal.toggleEditModal(undefined)} />
+            </div>
+            <label htmlFor="name">Name</label>
+            <input id="name" name="name" className="p-1" type="text" value={editAttractionModal.attraction.name} placeholder="Name" />
+            <label htmlFor="name">Name</label>
+            <textarea id="description" name="description" className="p-1 resize-none" value={editAttractionModal.attraction.description} placeholder="Description" />
+            <label htmlFor="name">URL</label>
+            <input id="url" name="url" className="p-1" type="url" value={editAttractionModal.attraction.url ?? ''} placeholder="URL" />
+            <label htmlFor="price">Price</label>
+            <div className="flex gap-2 items-center">
+                    <input name="price-group" type="radio" checked={editAttractionModal.attraction.price > 0} />
+                    <p>$</p>
+                    <input name="price" className="border p-1" type="number" placeholder="Price" />
+                </div>
+                <div className="flex gap-2">
+                    <input id="free" name="price-group" type="radio" checked={editAttractionModal.attraction.price === 0} value={0}/>
+                    <label htmlFor="free">Free</label>
+                </div>
+            <button className="font-bold rounded-md shadow-md px-2 py-3 my-2 bg-orange-400 text-button-text-light">Save Changes</button>
+        </form>
     )
 }
 
 const Attractions = () => {
     const { id } = useParams()
     const trip: Trip = useOutletContext()
+    const [editAttraction, setEditAttraction] = useState<Attraction | null>(null)
+
+    const toggleEditModal = (attraction?: Attraction) => {
+        if(attraction) {
+            setEditAttraction(attraction)
+        } else {
+            setEditAttraction(null)
+        }
+    }
 
     return (
-        <div>
+        <div className={`w-full min-h-screen ${editAttraction !== null ? 'backdrop-blur-md' : ''}`}>
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold">Attractions</h1>
                 <Link to={`/trips/${id}/attractions/addAttraction`} className="bg-green-400 text-black font-bold px-2 py-3 rounded-md">Add attraction</Link>
             </div>
-
+            {editAttraction ?  <EditAttractionModal attraction={editAttraction} toggleEditModal={toggleEditModal} /> : null}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-2">
-                {trip.attractions.map(attraction => <AttractionCard key={attraction.id} attraction={attraction} />)}
+                {trip.attractions.map(attraction => <AttractionCard key={attraction.id} attraction={attraction} toggleEditModal={toggleEditModal} />)}
             </div>
+            
             <h2>Suggested Attractions</h2>
         </div>
     )
