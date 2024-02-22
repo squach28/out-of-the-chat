@@ -25,10 +25,10 @@ const uploadImageToStorage = async (uid: string, file: fileUpload.UploadedFile):
     if (err !== null) {
       throw err
     }
-    fs.appendFileSync(filePath as string, file.data)
+    fs.appendFileSync(filePath, file.data)
   })
   const tmpObj = tmp.fileSync()
-  fs.appendFileSync(tmpObj.name as string, file.data)
+  fs.appendFileSync(tmpObj.name, file.data)
   const name = file.name
   const bucket = admin.storage().bucket()
   const destination = `profile_pictures/${uid}/${name}`
@@ -36,7 +36,7 @@ const uploadImageToStorage = async (uid: string, file: fileUpload.UploadedFile):
     destination
   }
   try {
-    const bucketUpload = await bucket.upload(tmpObj.name as string, options)
+    const bucketUpload = await bucket.upload(tmpObj.name, options)
     const uploadedFile = bucketUpload[0]
     await uploadedFile.makePublic()
     return bucketUpload[0].publicUrl()
