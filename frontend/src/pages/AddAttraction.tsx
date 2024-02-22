@@ -2,18 +2,28 @@ import { useState } from "react"
 import { Attraction } from "../types/Attraction"
 import {v4 as uuidv4 } from 'uuid'
 import { useParams } from "react-router-dom"
+import { getAuth } from "firebase/auth"
 
 const AddAttraction = () => {
     const { id } = useParams()
+    const auth = getAuth()
     const [attraction, setAttraction] = useState<Attraction>({
         id: uuidv4(),
         name: '',
         description: '',
-        price: 0
+        price: 0,
+        timestamp: '',
+        createdBy: auth.currentUser?.uid ?? ''
     })
 
     const onAddAttractionClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
+        setAttraction(prev => {
+            return {
+                ...prev,
+                timestamp: new Date().toISOString()
+            }
+        })
         fetch(`${import.meta.env.VITE_API_URL}/attractions?tripId=${id}`, {
             method: 'POST',
             headers: {
