@@ -99,17 +99,15 @@ const EditAttractionModal = (editAttractionModal: EditAttractionModal) => {
         })
     }
 
-    console.log(attraction)
-
     return(
-        <form className="w-full md:w-1/2 flex flex-col gap-3 absolute bottom-[70%] left-[50%] translate-x-[-50%] translate-y-[50%] bg-gray-200 rounded-md shadow-lg p-4">
+        <form className="w-full md:w-1/2 flex flex-col gap-3 absolute transition-opacity bottom-[70%] left-[50%] translate-x-[-50%] translate-y-[50%] z-10 bg-gray-200 rounded-md shadow-lg p-4">
             <div className="flex justify-between">
                 <h1 className="text-3xl">Edit Attraction</h1>
                 <img className="w-6 h-6 hover:cursor-pointer" src={exitIcon} alt="exit icon" onClick={() => editAttractionModal.toggleEditModal(undefined)} />
             </div>
             <label htmlFor="name">Name</label>
             <input id="name" name="name" className="p-1" type="text" onChange={onInputChange} value={editAttractionModal.attraction.name} placeholder="Name" />
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">Description</label>
             <textarea id="description" name="description" className="p-1 resize-none" onChange={onInputChange} value={editAttractionModal.attraction.description} placeholder="Description" />
             <label htmlFor="name">URL</label>
             <input id="url" name="url" className="p-1" type="url" onChange={onInputChange} value={editAttractionModal.attraction.url ?? ''} placeholder="URL" />
@@ -142,17 +140,21 @@ const Attractions = () => {
     }
 
     return (
-        <div className={`w-full min-h-screen ${editAttraction !== null ? 'backdrop-blur-md' : ''}`}>
-            <div className="flex justify-between items-center">
+        <div className={`w-full min-h-screen relative`}>
+            <div className={`flex justify-between items-center ${editAttraction !== null ? 'filter blur-sm opacity-55 ' : ''}`}>
                 <h1 className="text-2xl font-bold">Attractions</h1>
-                <Link to={`/trips/${id}/attractions/addAttraction`} className="bg-green-400 text-black font-bold px-2 py-3 rounded-md">Add attraction</Link>
+               {editAttraction === null ? 
+                    <Link to={`/trips/${id}/attractions/addAttraction`} className="bg-green-400 text-black font-bold px-2 py-3 rounded-md">Add attraction</Link>
+                :
+                    null
+                }
             </div>
-            {editAttraction ?  <EditAttractionModal attraction={editAttraction} toggleEditModal={toggleEditModal} /> : null}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-2">
+            {editAttraction ? <EditAttractionModal attraction={editAttraction} toggleEditModal={toggleEditModal} /> : null}
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-2 ${editAttraction !== null ? 'filter blur-sm' : ''}`}>
                 {trip.attractions.map(attraction => <AttractionCard key={attraction.id} attraction={attraction} toggleEditModal={toggleEditModal} />)}
             </div>
             
-            <h2>Suggested Attractions</h2>
+            <h2 className={`${editAttraction !== null ? 'filter blur-sm' : ''}`}>Suggested Attractions</h2>
         </div>
     )
 }
