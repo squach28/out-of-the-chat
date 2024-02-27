@@ -4,7 +4,8 @@ import validator from "validator"
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
-import googleIcon from '../assets/icons/google-icon.svg'
+import { Box, Button, TextField, Typography } from "@mui/material"
+import GoogleIcon from '@mui/icons-material/Google'
 
 
 const LoginForm = () => {
@@ -19,7 +20,6 @@ const LoginForm = () => {
         }
 
     })
-    const [error, setError] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const auth = getAuth()
     const navigate = useNavigate()
@@ -38,7 +38,7 @@ const LoginForm = () => {
         })
     }
 
-    const onInputBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onInputBlur = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | undefined>) => {
         const inputName = e.target.name 
         const inputValue = e.target.value 
         if(validator.isEmpty(inputValue)) {
@@ -93,19 +93,34 @@ const LoginForm = () => {
     const onLoginClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         setLoading(true)
-        setError('')
         try {
             if(validateLogin(loginCredential)) {
                 const verified = await isUserVerified(loginCredential.data.email)
                 if(verified) {
                     const user = await login(loginCredential)
                     if(user === null) {
-                        setError('Password was incorrect')
+                        setLoginCredential(prev => {
+                            return {
+                                ...prev,
+                                errors: {
+                                    ...prev.errors,
+                                    password: 'Password is incorrect'
+                                }
+                            }
+                        })
                     } else {
                         navigate('/', { replace: true })
                     }
                 } else {
-                   setError('Email is not verified, check your email for a verification link.')
+                    setLoginCredential(prev => {
+                        return {
+                            ...prev,
+                            errors: {
+                                ...prev.errors,
+                                email: 'Email is not verified, check your email for a verification link.'
+                            }
+                        }
+                    })
                 }
 
             }
@@ -135,29 +150,62 @@ const LoginForm = () => {
     }
 
     return (
-        <form className="flex flex-1 flex-col p-4 gap-2 mt-8 md:min-w-[550px] md:p-8 md:mx-auto md:shadow-md md:rounded-lg md:border">
+        <form className="flex flex-1 flex-col p-4 gap-4 mt-8 md:min-w-[550px] md:p-8 md:mx-auto md:shadow-md md:rounded-lg md:border">
             <h1 className="text-3xl font-bold my-2">Login</h1>
-            <div className="flex flex-row gap-3">
-                <label htmlFor="email" className="font-bold">Email</label>
-                {loginCredential.errors.email !== '' ? <p className={`text-red-400 font-bold`}>{loginCredential.errors.email}</p> : null}
-            </div>
-            <input id="email" name="email" className={`border p-1 ${loginCredential.errors.email === '' ? 'border-gray-200' : 'border-red-400'}`} type="email" onBlur={onInputBlur} onChange={onInputChange} placeholder="Email" />
-            <div className="flex flex-row gap-3">
-                <label htmlFor="password" className="font-bold">Password</label>
-                {loginCredential.errors.password !== '' ? <p className="text-red-400 font-bold">{loginCredential.errors.password}</p> : null}
-            </div>
-            <input id="password" name="password" className={`border p-1 ${loginCredential.errors.password === '' ? 'border-gray-200' : 'border-red-400'}`} type="password" onBlur={onInputBlur} onChange={onInputChange} placeholder="Password"/>
-            {error ? <p className="text-red-400">{error}</p> : null}
-            <button className={`font-bold rounded-md shadow-md px-1 py-2 my-2 text-button-text-light ${!validateLogin(loginCredential) ? 'bg-gray-400' : 'bg-button-light'}`} disabled={loading || !validateLogin(loginCredential)} onClick={onLoginClick}>{loading ? 'Loading...' : 'Login'}</button>
+            <TextField
+                id="email"
+                name="email"
+                type="email"
+                variant="outlined"
+                label="Email"
+                onChange={onInputChange}
+                onBlur={onInputBlur}
+                error={loginCredential.errors.email !== ''}
+                helperText={loginCredential.errors.email}
+            />
+            <TextField 
+                id="password"
+                name="password"
+                type="password"
+                variant="outlined"
+                label="Password"
+                onChange={onInputChange}
+                onBlur={onInputBlur}
+                error={loginCredential.errors.password !== ''}
+                helperText={loginCredential.errors.password}
+            />
+            <Button
+                variant="contained"
+                color='primary'
+                disabled={loading || !validateLogin(loginCredential)}
+                onClick={onLoginClick}
+                sx={{ p: 1.25, fontWeight: "bold" }}
+            >
+                {loading ? 'Loading...' : 'Login'}
+            </Button>
             <div className="flex justify-between">
                 <Link to="/forgotPassword" className="text-end">Forgot password?</Link>
                 <Link to="/signup" replace={true} className="">Sign Up</Link>
             </div>
             <p className="text-center mt-4">Or, continue with</p>
-            <button className="flex justify-center items-center gap-4 bg-blue-400 text-lg rounded-md shadow-md px-1 py-2 my-2" onClick={onGoogleLoginClick}>
-                <img src={googleIcon} alt="" />
-                <p className="text-white font-bold">Google</p>
-            </button>
+            <Button
+                variant="contained"
+                color="info"
+                onClick={onGoogleLoginClick}
+            >
+                <Box
+                    sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2, p: 0.5 }}
+                >
+                    <GoogleIcon />
+                    <Typography
+                        variant="body1"
+                        component="p"
+                        sx={{ fontWeight: "bold"}}
+                    >
+                        Google
+                    </Typography>
+                </Box>
+            </Button>
         </form>
     )
 }

@@ -63,7 +63,7 @@ const Navbar = () => {
     }
 
     return (
-        <nav className="w-full bg-navbar-light text-navbar-text-light p-4 relative">
+        <nav className="w-full bg-navbar-light text-navbar-text-light p-4 relative shadow-md">
             <ul className="flex justify-between relative">
                 <li className="font-bold text-xl"><Link to="/">Out of the Chat</Link></li>
                 <div className="flex gap-4">
