@@ -5,6 +5,7 @@ import { User } from "firebase/auth"
 import { FirebaseError } from "firebase/app"
 import { generateErrorMessage } from "../utils/ErrorMessageGenerator"
 import { useNavigate } from "react-router-dom"
+import { Button, TextField } from "@mui/material"
 
 const MINIMUM_PASSWORD_LENGTH = 6
 
@@ -58,10 +59,8 @@ const SignupForm = () => {
                 body: JSON.stringify(registration.data)
             })
             const data = await result.json()
-            if(result.ok) {
-                console.log(data)
-            } else {
-                setError(data.message)
+            if(data.message) {
+                return new FirebaseError(data.code, data.message)
             }
             return data
         } catch(e) {
@@ -93,7 +92,7 @@ const SignupForm = () => {
                 ...registration,
                 errors: {
                     ...registration.errors,
-                    [inputName]: `Must be 6 chars or longer`
+                    [inputName]: `Must be at least 6 characters`
                 }
             })
         } else if(inputName === 'confirmPassword' && registration.data.password !== registration.data.confirmPassword) {
@@ -101,7 +100,7 @@ const SignupForm = () => {
                 ...registration,
                 errors: {
                     ...registration.errors,
-                    [inputName]: `Passwords do not match`
+                    [inputName]: `Passwords must match`
                 }
             })
         }
@@ -136,8 +135,9 @@ const SignupForm = () => {
         try {
             if(validateRegistration(registration)) {
                 const user = await signup(registration)
+                console.log(user)
                 if(user instanceof FirebaseError) {
-                    setError(generateErrorMessage(user.code))
+                    setError(user.message)
                     return
                 } else {
                     navigate('/login?initialLogin=true', { replace: true})
@@ -153,35 +153,73 @@ const SignupForm = () => {
     }
 
     return (
-        <form className="flex flex-col p-4 gap-2 mt-8 md:min-w-[550px] md:p-8 md:mx-auto md:shadow-md md:rounded-lg md:border">
+        <form className="flex flex-col p-4 gap-5 mt-8 md:min-w-[550px] md:p-8 md:mx-auto md:shadow-md md:rounded-lg md:border">
             <h1 className="text-3xl font-bold my-2">Sign Up</h1>
-            <div className="flex flex-row gap-3">
-                <label htmlFor="firstName" className="font-bold">First Name <span className="text-red-400">*</span></label>
-                {registration.errors.firstName !== '' ? <p className="text-red-400 font-bold">{registration.errors.firstName}</p> : null}
-            </div>
-            <input id="firstName" name="firstName" className={`border p-1 ${registration.errors.firstName === '' ? 'border-gray-200' : 'border-red-400'}`} type="text" onBlur={onInputBlur} onChange={onInputChange} placeholder="John" />
-            <div className="flex flex-row gap-3">
-                <label htmlFor="lastName" className="font-bold">Last Name <span className="text-red-400">*</span></label>
-                {registration.errors.lastName ? <p className="text-sm text-red-400 font-bold">{registration.errors.lastName}</p> : null}
-            </div>
-            <input id="lastName" name="lastName" className={`border p-1 ${registration.errors.lastName === '' ? 'border-gray-200' : 'border-red-400'}`} type="text" onBlur={onInputBlur} onChange={onInputChange} placeholder="Doe" />
-            <div className="flex flex-row gap-3">
-                <label htmlFor="email" className="font-bold">Email <span className="text-red-400">*</span></label>
-                {registration.errors.email ? <p className="text-sm text-red-400 font-bold">{registration.errors.email}</p> : null}
-            </div>
-            <input id="email" name="email" className={`border p-1 ${registration.errors.email === '' ? 'border-gray-200' : 'border-red-400'}`} type="email" onBlur={onInputBlur} onChange={onInputChange} placeholder="johndoe@gmail.com" />
-            <div className="flex flex-row gap-3">
-                <label htmlFor="password" className="font-bold">Password <span className="text-red-400">*</span></label>
-                {registration.errors.password ? <p className="text-sm text-red-400 font-bold">{registration.errors.password}</p> : null}
-            </div>
-            <input id="password" name="password" className={`border p-1 ${registration.errors.password === '' ? 'border-gray-200' : 'border-red-400'}`} type="password" onBlur={onInputBlur} onChange={onInputChange} placeholder="6 characters or longer" />
-            <div className="flex flex-row gap-3">
-                <label htmlFor="confirmPassword" className="font-bold">Confirm Password <span className="text-red-400">*</span></label>
-                {registration.errors.confirmPassword ? <p className="text-sm text-red-400 font-bold">{registration.errors.confirmPassword}</p> : null}
-            </div>
-            <input id="confirmPassword" name="confirmPassword" className={`border p-1 ${registration.errors.confirmPassword === '' ? 'border-gray-200' : 'border-red-400'}`} type="password" onBlur={onInputBlur} onChange={onInputChange} placeholder="Must match password" />
+            <TextField 
+                variant="outlined"
+                id="firstName"
+                name="firstName"
+                type="text"
+                label="First Name"
+                onChange={onInputChange}
+                onBlur={onInputBlur}
+                error={registration.errors.firstName !== ''}
+                helperText={registration.errors.firstName}
+            />
+            <TextField 
+                variant="outlined"
+                id="lastName"
+                name="lastName"
+                type="text"
+                label="Last Name"
+                onChange={onInputChange}
+                onBlur={onInputBlur}
+                error={registration.errors.lastName !== ''}
+                helperText={registration.errors.lastName}
+            />
+            <TextField 
+                variant="outlined"
+                id="email"
+                name="email"
+                type="email"
+                label="Email"
+                onChange={onInputChange}
+                onBlur={onInputBlur}
+                error={registration.errors.email !== ''}
+                helperText={registration.errors.email}
+            />
+            <TextField 
+                variant="outlined"
+                id="password"
+                name="password"
+                type="password"
+                label="Password"
+                onChange={onInputChange}
+                onBlur={onInputBlur}
+                error={registration.errors.password !== ''}
+                helperText={registration.errors.password || 'Password must be at least 6 characters'}
+            />
+            <TextField 
+                variant="outlined"
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                label="Confirm Password"
+                onChange={onInputChange}
+                onBlur={onInputBlur}
+                error={registration.errors.confirmPassword !== ''}
+                helperText={registration.errors.password || 'Passwords must match'}
+            />
             {error ? <p className="text-red-400">{error}</p> : null} 
-            <button className={`font-bold rounded-md bg-button-light text-white shadow-md px-1 py-2 my-2 ${!validateRegistration(registration) ? 'bg-gray-300' : 'bg-button-light'}`} disabled={loading || !validateRegistration(registration)} onClick={onSignupClick}>{loading ? 'Loading...' : 'Sign Up'}</button>
+            <Button
+                variant="contained"
+                color="primary"
+                disabled={loading || !validateRegistration(registration)}
+                onClick={onSignupClick}
+                sx={{ p: 1 }}
+            >
+                Sign up
+            </Button>
         </form>
     )
 }
