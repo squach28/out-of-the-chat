@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import validator from "validator"
 import verifyEmailImg from '../assets/images/verifyEmail.svg'
@@ -11,8 +11,8 @@ type ForgotPasswordFormProps = {
 }
 
 const ForgotPasswordForm = (forgotPasswordFormProps: ForgotPasswordFormProps) => {
-
     const [email, setEmail] = useState<string>('')
+    const navigate = useNavigate()
 
     const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value)
@@ -20,6 +20,10 @@ const ForgotPasswordForm = (forgotPasswordFormProps: ForgotPasswordFormProps) =>
 
     const validateEmail = (email: string) => {
         return validator.isEmail(email)
+    }
+
+    const navigateToLogin = () => {
+        navigate('/login', { replace: true })
     }
 
     return(
@@ -46,8 +50,9 @@ const ForgotPasswordForm = (forgotPasswordFormProps: ForgotPasswordFormProps) =>
         </Button>
         <Button
             variant="outlined"
+            onClick={navigateToLogin}
         >
-            <Link to="/login" className="text-center" replace={true}>Back to log in</Link>
+            Back to log in
         </Button>
     </form>        
     )
