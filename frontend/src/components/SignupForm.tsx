@@ -3,7 +3,6 @@ import { Registration } from "../types/Registration"
 import validator from 'validator'
 import { User } from "firebase/auth"
 import { FirebaseError } from "firebase/app"
-import { generateErrorMessage } from "../utils/ErrorMessageGenerator"
 import { useNavigate } from "react-router-dom"
 import { Button, TextField } from "@mui/material"
 
