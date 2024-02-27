@@ -1,25 +1,58 @@
 import { useSearchParams } from "react-router-dom"
 import LoginForm from "../components/LoginForm"
-import Toast from "../components/Toast"
-import checkSolidIcon from '../assets/icons/check-solid.svg'
+import { Alert, Snackbar } from "@mui/material"
+import { useState } from "react"
 
 const Login = () => {
     const [searchParams, ] = useSearchParams()
+    const [initialLogin, setInitialLogin] = useState<string | null>(searchParams.get('initialLogin'))
+    const [logoutSuccess, setLogoutSuccess] = useState<string | null>(searchParams.get('logOut'))
+
+    const handleInitialLoginClose = () => {
+        setInitialLogin(null)
+    }
+
+    const handleLogoutSuccessClose = () => {
+        setLogoutSuccess(null)
+    }
+
+
     return (
         <div className="flex flex-col md:mt-24">
             {
-            searchParams.get('initialLogin') ?
-                <div className="w-[90%] absolute bottom-[2%] right-[50%] translate-x-[50%]">
-                    <Toast iconImg={checkSolidIcon} title="Success!" content="Check your email to verify account" />
-                </div> 
+            initialLogin ?
+                <Snackbar 
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                    open={Boolean(initialLogin)}
+                    onClose={handleInitialLoginClose}
+                >
+                    <Alert
+                        onClose={handleInitialLoginClose}
+                        severity="info"
+                        sx={{ width: "100%" }}
+                    >
+                        Check your email to verify your account.
+                    </Alert>
+                </Snackbar>
                 : 
                 null
             }
             {
-                searchParams.get('logOut') ?
-                <div className="w-[90%] absolute bottom-[2%] right-[50%] translate-x-[50%]">
-                    <Toast iconImg={checkSolidIcon} title="Success!" content="Log out successful" />
-                </div> 
+                logoutSuccess ?
+                <Snackbar 
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                    open={Boolean(logoutSuccess)}
+                    onClose={handleLogoutSuccessClose}
+                >
+                    <Alert
+                        onClose={handleLogoutSuccessClose}
+                        severity="success"
+                        variant="filled"
+                        sx={{ width: "100%" }}
+                    >
+                        You have successfully logged out!
+                    </Alert>
+                </Snackbar>
                 : 
                 null                    
             }
