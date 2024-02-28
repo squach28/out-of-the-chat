@@ -5,6 +5,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
 import { useDebounce } from "../hooks/useDebounce"
 import Spinner from "../components/Spinner"
+import { Button, TextField } from "@mui/material"
 
 type FormProps = {
     value?: string
@@ -55,12 +56,24 @@ const TripNameForm = (formProps: FormProps) => {
 
     return (
         <form className="flex flex-col gap-3">
-            <div className="flex gap-2">
-                <label htmlFor="name">Trip Name</label>
-                {error ? <p className="text-red-400">{error}</p> : null}
-            </div>
-                <input id="name" name="name" className="border p-1" autoFocus={true} type="text" onChange={onNameChange} onBlur={onNameBlur} value={name} placeholder="Trip Name"/>
-                <button className="block ml-auto bg-button-light text-button-text-light px-3 py-2 rounded-lg" onClick={onContinueClicked}>Continue</button>
+            <TextField 
+                id="name"
+                name="name"
+                label="Trip Name"
+                type="text"
+                onChange={onNameChange}
+                onBlur={onNameBlur}
+                value={name}
+                error={error !== ''}
+                helperText={error}
+            />
+            <Button
+                variant="contained"
+                onClick={onContinueClicked}
+                sx={{ marginLeft: "auto" }}
+            >
+                Continue
+            </Button>
         </form>
     )
 }

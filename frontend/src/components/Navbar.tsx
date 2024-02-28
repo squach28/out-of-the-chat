@@ -65,7 +65,7 @@ const Navbar = () => {
 
     return (
         <nav className="w-full bg-navbar-light text-navbar-text-light p-4 relative shadow-lg">
-            <ul className="flex justify-between relative">
+            <ul className="flex justify-between items-center relative">
                 <li className="font-bold text-xl"><Link to="/">Out of the Chat</Link></li>
                 <div className="flex gap-4">
                     {pathsToHideLogin.includes(pathName) ? 
