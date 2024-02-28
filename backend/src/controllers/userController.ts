@@ -5,7 +5,16 @@ import fs from 'fs'
 import tmp from 'tmp'
 
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
-  res.status(200).json('Good job')
+  try {
+    const { uid } = req.params
+    console.log(uid)
+    const updatedInfo = req.body as object
+    const update = await admin.auth().updateUser(uid, updatedInfo)
+    console.log(update)
+    res.status(200).json({ message: 'Success' })
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 const updateUserProfilePicture = async (uid: string, imgUrl: string): Promise<boolean> => {

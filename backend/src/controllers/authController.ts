@@ -53,7 +53,7 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
     const errCode = e as FirebaseError
     switch (errCode.code) {
       case 'auth/email-already-exists':
-        res.status(400).json({ message: errCode.message })
+        res.status(400).json(e)
         break
       default:
         res.status(500).json({ message: 'Something went wrong' })
