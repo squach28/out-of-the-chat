@@ -1,3 +1,4 @@
+import { Avatar } from "@mui/material"
 import { User, getAuth, onAuthStateChanged } from "firebase/auth"
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
@@ -67,8 +68,19 @@ const Navbar = () => {
             <ul className="flex justify-between relative">
                 <li className="font-bold text-xl"><Link to="/">Out of the Chat</Link></li>
                 <div className="flex gap-4">
-                    <li className="hidden">Trips</li>
-                    {pathsToHideLogin.includes(pathName) ? null : <li className="hover:cursor-pointer">{user && user.photoURL ? <img className="w-7 h-7 rounded-full" src={user.photoURL} alt="user profile picture" referrerPolicy="no-referrer" loading="lazy" onClick={onProfileClicked} /> : <Link to="/login">Login</Link>}</li>}
+                    {pathsToHideLogin.includes(pathName) ? 
+                        null 
+                    : 
+                        <li className="hover:cursor-pointer">
+                            {user && user.photoURL ? 
+                                <Avatar 
+                                    src={user.photoURL} 
+                                    alt="user profile picture"
+                                    onClick={onProfileClicked}
+                                /> 
+                            : 
+                                <Link to="/login">Login</Link>}
+                        </li>}
                 </div>
             </ul>
             {showExtendedMenu && user ? <ExtendedMenu hideMenu={hideExtendedMenu} /> : null}

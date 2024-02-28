@@ -1,24 +1,33 @@
 import { User, getAuth, onAuthStateChanged } from "firebase/auth"
 import React, { useEffect, useState } from "react"
 import { UserSettings } from "../types/UserSettings"
+import { Button } from "@mui/material"
+import _ from 'lodash'
 
 const SettingsForm = () => {
     const [user, setUser] = useState<User | null>(null)
     const [photo, setPhoto] = useState<string>('')
+    const [prevAccount, setPrevAccount] = useState<UserSettings>({
+        firstName: '',
+        lastName: '',
+        email: ''
+    })
     const [changes, setChanges] = useState<UserSettings>({
         firstName: '',
         lastName: '',
         email: ''
     })
-
     useEffect(() => {
         const auth = getAuth()
-        console.log(auth.currentUser)
         onAuthStateChanged(auth, (user) => {
             if(user) {
                 setUser(user)
-                console.log(user.displayName!.split(' ')[1])
                 setChanges({
+                    firstName: user.displayName!.split(' ')[0],
+                    lastName: user.displayName!.split(' ')[1],
+                    email: user.email!
+                })
+                setPrevAccount({
                     firstName: user.displayName!.split(' ')[0],
                     lastName: user.displayName!.split(' ')[1],
                     email: user.email!
@@ -67,7 +76,13 @@ const SettingsForm = () => {
                 <input className="border p-1" id="lastName" name="lastName" type="text" placeholder="Last Name" onChange={onChange} value={changes.lastName ?? ''} />
                 <label htmlFor="email">Email</label>
                 <input className="border p-1" id="email" name="email" type="email" placeholder="First Name" onChange={onChange} value={changes.email ?? ''} />
-                <button className="font-bold rounded-md shadow-md px-1 py-2 my-2 bg-button-light text-button-text-light">Save Changes</button>
+                <Button
+                    variant="contained"
+                    disabled={_.isEqual(prevAccount, changes)}
+                    sx={{ fontWeight: "bold", marginTop: 2, p: 1 }}
+                >
+                    Save Changes
+                </Button>
             </form>
         :
             null
