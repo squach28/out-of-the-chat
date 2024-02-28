@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { Trip } from "../types/Trip"
+import { Card } from "@mui/material"
 
 type TripCardProps = {
     trip: Trip
@@ -16,14 +17,18 @@ const TripCard = (tripCardProps: TripCardProps) => {
     }   
 
     return (
-        <div className="p-2 rounded-md shadow-md bg-gray-200 hover:cursor-pointer" onClick={navigateToTripPage}>
+        <Card
+            className="hover:cursor-pointer"
+            onClick={navigateToTripPage}
+            sx={{ px: 2, py: 3}}
+        >
             <p className="text-3xl font-bold">{tripCardProps.trip.name}</p>
             <div className="flex gap-2">
                 <p>{startDate.toLocaleString('en-US', { year: 'numeric', month: 'short', day: '2-digit'})}</p>
                 <p>to</p>
                 <p>{endDate.toLocaleString('en-US', { year: 'numeric', month: 'short', day: '2-digit'})}</p>
             </div>
-        </div>
+        </Card>
     )
 }
 

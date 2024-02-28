@@ -30,7 +30,7 @@ const Trips = () => {
                     </Link>
                 </div>
                 { trips ? 
-                    <ul className="flex flex-col gap-4 py-4">
+                    <ul className="grid grid-cols-3 gap-4 py-4">
                         {trips.map(trip => 
                             <li key={trip.id}>
                                 <TripCard trip={trip} />
