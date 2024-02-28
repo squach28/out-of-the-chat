@@ -47,7 +47,7 @@ export const createTrip = async (req: Request, res: Response): Promise<void> => 
       hotels: [],
       restaurants: []
     })
-    res.status(201).json({ message: 'Success, trip was created' })
+    res.status(201).json({ id: tripDoc.id, name })
   } catch (e) {
     console.log(e)
   }
