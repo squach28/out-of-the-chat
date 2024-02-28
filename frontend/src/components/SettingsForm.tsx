@@ -57,7 +57,7 @@ const SettingsForm = () => {
                             .then(() => setPhoto(file.name))
                             setSuccess(true)
                     })
-                    .catch(e => {
+                    .catch(() => {
                         setSuccess(false)
                     })
                     .finally(() => {
@@ -97,7 +97,7 @@ const SettingsForm = () => {
                     user.reload()
                     setSuccess(true)
                 })
-                .catch(e => {
+                .catch(() => {
                     setSuccess(false)
                 })
                 .finally(() => {
