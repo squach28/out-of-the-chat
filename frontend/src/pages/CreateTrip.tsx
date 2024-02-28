@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
 import { TripCreation } from "../types/TripCreation"
-import { Autocomplete, Box, Button, CircularProgress, Modal, TextField, Typography } from "@mui/material"
+import { Autocomplete, Button, CircularProgress, TextField } from "@mui/material"
 import { useDebounce } from "../hooks/useDebounce"
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import dayjs from "dayjs"
+import { useNavigate } from "react-router-dom"
 
 const CreateTripForm = () => {
     const date = new Date().setDate(new Date().getDate() + 7)
@@ -24,12 +25,12 @@ const CreateTripForm = () => {
         endDate: ''
     })
 
+    const navigate = useNavigate()
     const [suggested, setSuggested] = useState<string[]>([])
     const [suggestedLoading, setSuggestedLoading] = useState<boolean>(false)
     const [autocomplete,] = useState<boolean>(true)
     const debouncedSearch = useDebounce(trip.location)
     const [loading, setLoading] = useState<boolean>(false)
-    const [success, setSuccess] = useState<boolean | null>(null)
 
     useEffect(() => {
         const auth = getAuth()
@@ -148,20 +149,18 @@ const CreateTripForm = () => {
         console.log(errors)
         const errs = Object.values(errors)
         for(const value of errs) {
-            
             if(value !== '') {
                 return
             }
         }
         console.log('creating trip')
         createTrip(trip)
-            .then((res) => {
-                console.log(res)
-                setSuccess(true)
+            .then((res: { id: string, name: string }) => {
+                const id = res.id
+                navigate(`/trips/${id}`, { replace: true })
             })
             .catch(e => {
                 console.log(e)
-                setSuccess(false)
             })
 
     }
@@ -288,15 +287,6 @@ const CreateTripForm = () => {
             >
                 Create Trip
             </Button>
-            <Modal
-                open={success !== null && success}
-            >
-                <Box>
-                    <Typography>
-                        Success
-                    </Typography>
-                </Box>
-            </Modal>
         </form>
     )
 }
