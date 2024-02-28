@@ -1,5 +1,4 @@
 import { Link, useSearchParams } from "react-router-dom"
-import Navbar from "../components/Navbar"
 import { applyActionCode, getAuth } from "firebase/auth"
 import { useEffect, useState } from "react"
 import newMessage from '../assets/images/newMessage.svg'
@@ -20,6 +19,7 @@ const VerifyEmail = () => {
     useEffect(() => { //TODO: need to add a fetch to check if user is already verified so firebase error doesn't occur
         const auth = getAuth()
         if(actionCode !== null) {
+            console.log(actionCode)
             applyActionCode(auth, actionCode)
                 .then(() => {
                     setResult(VerifyEmailResult.SUCCESS)
@@ -38,13 +38,11 @@ const VerifyEmail = () => {
         case VerifyEmailResult.PENDING:
             return (
                     <div>
-                        <Navbar />
                     </div>
             )
         case VerifyEmailResult.SUCCESS:
             return(                    
                     <div>
-                        <Navbar />
                         <div className="flex flex-col gap-2 text-center p-4 mt-4">
                             <h1 className="text-3xl font-bold">Success!</h1>
                             <img src={newMessage} alt="" />
@@ -59,7 +57,6 @@ const VerifyEmail = () => {
         case VerifyEmailResult.FAILED:
             return (            
                 <div>
-                    <Navbar />
                     <div className="flex flex-col gap-2 text-center p-4">
                         <h1 className="text-3xl font-bold">Something went wrong</h1>
                         <img src={missedChance} alt="" />
