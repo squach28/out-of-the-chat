@@ -48,11 +48,16 @@ export const createTrip = async (req: Request, res: Response): Promise<void> => 
       hotels: [],
       restaurants: []
     })
-    await feedCollection.doc(tripDoc.id).collection('feed').doc().set({
-      type: 'CREATE',
+
+    const feedDoc = feedCollection.doc(tripDoc.id).collection('feed').doc()
+    await feedDoc.set({
+      id: feedDoc.id,
+      action: 'CREATE',
       name,
+      type: 'TRIP',
       author: createdBy,
-      timestamp: new Date().toISOString()
+      authorName: name,
+      timestamp: new Date()
     })
     res.status(201).json({ id: tripDoc.id, name })
   } catch (e) {
