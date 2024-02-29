@@ -2,6 +2,8 @@ import { Link, Outlet, useLocation, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { Trip } from "../types/Trip"
 import Breadcrumbs from "../components/Breadcrumbs"
+import SettingsIcon from '@mui/icons-material/Settings'
+import { IconButton } from "@mui/material"
 
 enum TripDetailsView {
     FEED = 'feed',
@@ -34,7 +36,12 @@ const TripDetails = () => {
                 {trip ? 
                     <div>
                         <Breadcrumbs data={trip} />
-                        <h1 className="text-4xl font-bold">{trip.name}</h1>
+                        <div className="flex justify-between">
+                            <h1 className="text-4xl font-bold">{trip.name}</h1>
+                            <IconButton color="primary">
+                                <SettingsIcon />
+                            </IconButton>
+                        </div>
                         <div className="md:grid md:grid-cols-6 md:grid-rows-1 md:gap-8">
                             <ul className="flex gap-2 md:flex-col my-4">
                                 <li className={`${getCurrentPage() === TripDetailsView.FEED ? 'bg-green-200 font-bold' : 'bg-transparent'} rounded-md hover:cursor-pointer`} id="feed"><Link className="w-full inline-block p-2" to={`/trips/${trip.id}/feed`}>Feed</Link></li>
