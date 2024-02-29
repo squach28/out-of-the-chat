@@ -4,7 +4,7 @@ interface Attraction {
   description: string
   price: number
   createdBy: string
-  timestamp: string
+  timestamp: Date
 }
 
 export default Attraction

@@ -1,8 +1,9 @@
 import type { Request, Response } from 'express'
 import admin from 'firebase-admin'
+import { addToFeed } from '../utils/feedUtil'
+import type { FeedItem } from '../types/FeedItem'
 
 const DB_NAME = 'trips'
-const FEED_DB_NAME = 'feed'
 
 export const getTripById = async (req: Request, res: Response): Promise<void> => {
   const tripId = req.params.id
@@ -35,7 +36,6 @@ export const createTrip = async (req: Request, res: Response): Promise<void> => 
   const { name, location, startDate, endDate, createdBy } = req.body
   try {
     const tripsCollection = admin.firestore().collection(DB_NAME)
-    const feedCollection = admin.firestore().collection(FEED_DB_NAME)
     const tripDoc = tripsCollection.doc()
     await tripDoc.set({
       id: tripDoc.id,
@@ -49,16 +49,18 @@ export const createTrip = async (req: Request, res: Response): Promise<void> => 
       restaurants: []
     })
 
-    const feedDoc = feedCollection.doc(tripDoc.id).collection('feed').doc()
-    await feedDoc.set({
-      id: feedDoc.id,
+    const feedItem: FeedItem = {
       action: 'CREATE',
-      name,
       type: 'TRIP',
-      author: createdBy,
-      authorName: name,
-      timestamp: new Date()
-    })
+      name,
+      author: {
+        uid: createdBy,
+        name: '',
+        photoURL: ''
+      }
+    }
+
+    await addToFeed(tripDoc.id, feedItem)
     res.status(201).json({ id: tripDoc.id, name })
   } catch (e) {
     console.log(e)

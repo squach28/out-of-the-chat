@@ -1,5 +1,8 @@
 import type { Request, Response } from 'express'
 import admin from 'firebase-admin'
+import { addToFeed } from '../utils/feedUtil'
+import type { FeedItem } from '../types/FeedItem'
+import type Attraction from '../types/Attraction'
 
 const DB_NAME = 'trips'
 
@@ -9,7 +12,7 @@ const DB_NAME = 'trips'
 
 export const addAttraction = async (req: Request, res: Response): Promise<void> => {
   const tripId = req.query.tripId as string
-  const attraction = {
+  const attraction: Attraction = {
     ...req.body,
     timestamp: new Date().toISOString()
   }
@@ -24,6 +27,18 @@ export const addAttraction = async (req: Request, res: Response): Promise<void> 
         await doc.ref.update({
           attractions: admin.firestore.FieldValue.arrayUnion(attraction)
         })
+        const feedItem: FeedItem = {
+          action: 'ADD',
+          type: 'ATTRACTION',
+          name: attraction.name,
+          author: {
+            uid: attraction.createdBy,
+            name: '',
+            photoURL: ''
+          },
+          timestamp: attraction.timestamp
+        }
+        await addToFeed(tripId, feedItem)
         res.status(200).json('success')
       }
     }

@@ -5,7 +5,6 @@ const DB_NAME = 'feed'
 
 export const getFeedByTripId = async (req: Request, res: Response): Promise<void> => {
   const { tripId } = req.params
-  console.log(tripId)
   try {
     const collection = admin.firestore().collection(DB_NAME).doc(tripId).collection('feed')
     collection.get()
