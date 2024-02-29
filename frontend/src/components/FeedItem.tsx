@@ -41,7 +41,7 @@ const FeedItem = (postProps: FeedItemProps) => {
   }
 
   return (
-    <Card className="max-w-lg mx-auto">
+    <Card className=" min-w-[32rem] max-w-lg mx-auto">
       <CardContent>
         <Typography
               variant="h3"

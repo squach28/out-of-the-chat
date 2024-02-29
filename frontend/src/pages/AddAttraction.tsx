@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Attraction } from "../types/Attraction"
 import {v4 as uuidv4 } from 'uuid'
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { getAuth } from "firebase/auth"
 import { FormControl, FormControlLabel, FormLabel, InputAdornment, Radio, RadioGroup, TextField } from "@mui/material"
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
@@ -18,6 +18,7 @@ const AddAttraction = () => {
         createdBy: auth.currentUser?.uid ?? ''
     })
     const [checked, setChecked] = useState<boolean>(false)
+    const navigate = useNavigate()
 
     const onAddAttractionClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
@@ -35,7 +36,8 @@ const AddAttraction = () => {
             body: JSON.stringify(attraction)
         })
             .then(res => res.json())
-            .then(data => console.log(data))
+            .then(() => navigate(`/trips/${id}/attractions`))
+            .catch(e => console.log(e))
     }
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
