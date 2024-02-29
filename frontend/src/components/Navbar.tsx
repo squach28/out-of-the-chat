@@ -1,17 +1,20 @@
-import { Avatar } from "@mui/material"
+import { Avatar, Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
 import { User, getAuth, onAuthStateChanged } from "firebase/auth"
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
+import PersonIcon from '@mui/icons-material/Person'
+import LocalAirportIcon from '@mui/icons-material/LocalAirport'
+import SettingsIcon from '@mui/icons-material/Settings'
+import LogoutIcon from '@mui/icons-material/Logout'
 
-type ExtendedMenuProps = {
-    hideMenu: () => void
+type DrawerListProps = {
+    toggleDrawer: (newOpen: boolean) => void
 }
 
-const ExtendedMenu = (extendedMenuProps: ExtendedMenuProps) => {
+const DrawerList = (drawerListProps: DrawerListProps) => {
     const auth = getAuth()
     const navigate = useNavigate()
     const logOut = () => {
-        extendedMenuProps.hideMenu()
         try {
             auth.signOut()
                 .then(() => {
@@ -21,19 +24,57 @@ const ExtendedMenu = (extendedMenuProps: ExtendedMenuProps) => {
             console.log(e)
         }
     }
-
+    const items = [
+        {
+            name: 'Profile',
+            icon: <PersonIcon />,
+            onClick: () => {
+                drawerListProps.toggleDrawer(false)
+                navigate('/profile')
+            }
+        },
+        {
+            name: 'Trips',
+            icon: <LocalAirportIcon />,
+            onClick: () => {
+                drawerListProps.toggleDrawer(false)
+                navigate('/trips')
+            }
+        },
+        {
+            name: 'Settings',
+            icon: <SettingsIcon />,
+            onClick: () => {
+                drawerListProps.toggleDrawer(false)
+                navigate('/settings')
+            }
+        },
+        {
+            name: 'Log out',
+            icon: <LogoutIcon />,
+            onClick: () => {
+                drawerListProps.toggleDrawer(false)
+                logOut()
+            }
+        }
+    ]
+    // Profile, Trips, settings
     return(
-        <ul className="absolute w-full left-0 top-[100%] p-2 text-center bg-gray-500">
-            <li className="w-full">
-                <Link className="w-full block" to={`/trips`} onClick={extendedMenuProps.hideMenu}>Trips</Link>
-            </li>
-            <li className="w-full">
-                <Link className="w-full block" to={`/settings`} onClick={extendedMenuProps.hideMenu}>Settings</Link>
-            </li>
-            <li className="w-full">
-                <button className="w-full block" onClick={logOut}>Log out</button>
-            </li>
-        </ul>
+        <Box
+            role="presentation"
+            sx={{ width: "auto" }}
+        >
+            <List>
+                {items.map(item => (
+                    <ListItemButton key={item.name} onClick={item.onClick}>
+                        <ListItemIcon>
+                            {item.icon}
+                        </ListItemIcon>
+                        <ListItemText primary={item.name} />
+                    </ListItemButton>
+                ))}
+            </List>
+        </Box>
     )
 }
 
@@ -43,7 +84,7 @@ const Navbar = () => {
     const location = useLocation()
     const pathName = location.pathname
     const pathsToHideLogin = [ '/signup', '/login', '/forgotPassword', '/settings']
-    const [showExtendedMenu, setShowExtendedMenu] = useState<boolean>(false)
+    const [open, setOpen] = useState<boolean>(false)
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
@@ -55,12 +96,8 @@ const Navbar = () => {
         })
     }, [auth])
 
-    const onProfileClicked = () => {
-        setShowExtendedMenu(prev => !prev)
-    }
-
-    const hideExtendedMenu = () => {
-        setShowExtendedMenu(false)
+    const toggleDrawer = (newOpen: boolean) => {
+        setOpen(newOpen)
     }
 
     return (
@@ -76,14 +113,20 @@ const Navbar = () => {
                                 <Avatar 
                                     src={user.photoURL} 
                                     alt="user profile picture"
-                                    onClick={onProfileClicked}
+                                    onClick={() => toggleDrawer(true)}
                                 /> 
                             : 
                                 <Link to="/login">Login</Link>}
                         </li>}
                 </div>
             </ul>
-            {showExtendedMenu && user ? <ExtendedMenu hideMenu={hideExtendedMenu} /> : null}
+            <Drawer
+                anchor="top"
+                open={open}
+                onClose={() => toggleDrawer(false)}
+            >
+                <DrawerList toggleDrawer={toggleDrawer} />
+            </Drawer>
         </nav>
     )
 }
