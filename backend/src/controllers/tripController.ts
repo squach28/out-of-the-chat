@@ -2,6 +2,7 @@ import type { Request, Response } from 'express'
 import admin from 'firebase-admin'
 
 const DB_NAME = 'trips'
+const FEED_DB_NAME = 'feed'
 
 export const getTripById = async (req: Request, res: Response): Promise<void> => {
   const tripId = req.params.id
@@ -33,8 +34,8 @@ export const getTripByUid = async (req: Request, res: Response): Promise<void> =
 export const createTrip = async (req: Request, res: Response): Promise<void> => {
   const { name, location, startDate, endDate, createdBy } = req.body
   try {
-    console.log('inserting')
     const tripsCollection = admin.firestore().collection(DB_NAME)
+    const feedCollection = admin.firestore().collection(FEED_DB_NAME)
     const tripDoc = tripsCollection.doc()
     await tripDoc.set({
       id: tripDoc.id,
@@ -46,6 +47,12 @@ export const createTrip = async (req: Request, res: Response): Promise<void> => 
       attractions: [],
       hotels: [],
       restaurants: []
+    })
+    await feedCollection.doc(tripDoc.id).collection('feed').doc().set({
+      type: 'CREATE',
+      name,
+      author: createdBy,
+      timestamp: new Date().toISOString()
     })
     res.status(201).json({ id: tripDoc.id, name })
   } catch (e) {
