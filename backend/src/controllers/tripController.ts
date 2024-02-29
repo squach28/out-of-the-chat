@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 import admin from 'firebase-admin'
-import { addToFeed } from '../utils/feedUtil'
+import { addToFeed, createFeed } from '../utils/feedUtil'
 import type { FeedItem } from '../types/FeedItem'
 
 const DB_NAME = 'trips'
@@ -59,7 +59,7 @@ export const createTrip = async (req: Request, res: Response): Promise<void> => 
         photoURL: ''
       }
     }
-
+    await createFeed(tripDoc.id)
     await addToFeed(tripDoc.id, feedItem)
     res.status(201).json({ id: tripDoc.id, name })
   } catch (e) {

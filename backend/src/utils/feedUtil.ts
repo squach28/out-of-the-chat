@@ -14,3 +14,11 @@ export const addToFeed = async (tripId: string, feedItem: FeedItem): Promise<voi
     console.log(e)
   }
 }
+
+export const createFeed = async (tripId: string): Promise<void> => {
+  try {
+    await admin.firestore().collection(DB_NAME).doc(tripId).create({})
+  } catch (e) {
+    console.log(e)
+  }
+}
