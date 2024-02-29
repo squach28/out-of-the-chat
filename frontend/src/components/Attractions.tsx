@@ -5,6 +5,8 @@ import trashIcon from '../assets/icons/trash-solid.svg'
 import editIcon from '../assets/icons/pen-to-square-solid.svg'
 import exitIcon from '../assets/icons/xmark-solid.svg'
 import { useRef, useState } from "react"
+import { Button } from "@mui/material"
+import AddIcon from '@mui/icons-material/Add'
 
 
 type AttractionCardProps = {
@@ -141,10 +143,17 @@ const Attractions = () => {
 
     return (
         <div className={`w-full min-h-screen relative`}>
-            <div className={`flex justify-between items-center ${editAttraction !== null ? 'filter blur-sm opacity-55 ' : ''}`}>
+            <div className={`flex justify-between items-center mt-6 ${editAttraction !== null ? 'filter blur-sm opacity-55 ' : ''}`}>
                 <h1 className="text-2xl font-bold">Attractions</h1>
                {editAttraction === null ? 
-                    <Link to={`/trips/${id}/attractions/addAttraction`} className="bg-green-400 text-black font-bold px-2 py-3 rounded-md">Add attraction</Link>
+                    <Button
+                    variant="contained"
+                    color="secondary"
+                    sx={{ display: "flex", gap: 1}}
+                    >
+                        <Link to={`/trips/${id}/attractions/addAttraction`}>Add Attraction</Link>
+                        <AddIcon />
+                    </Button>                
                 :
                     null
                 }

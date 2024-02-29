@@ -59,7 +59,7 @@ const AddAttraction = () => {
     }
 
     return (
-        <div>
+        <div className="mt-6">
             <h1 className="text-4xl font-bold">Add Attraction</h1>
             <form className="flex flex-col gap-2">
                 <label htmlFor="">Name</label>
