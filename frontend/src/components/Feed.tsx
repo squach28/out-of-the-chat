@@ -1,22 +1,36 @@
-import { useEffect, useState } from "react"
-import { Attraction } from "../types/Attraction"
-import { Restaurant } from "../types/Restuarant"
-import { Hotel } from "../types/Hotel"
+import { ReactNode, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
+import { Post } from "../types/Post"
+import FeedItem from "./FeedItem"
 
 const Feed = () => {
-    const [feed, setFeed] = useState<Array<Attraction | Restaurant | Hotel> | null>(null)
+    const [feed, setFeed] = useState<Post[]>([])
     const { id } = useParams()
-    console.log(id)
+
     useEffect(() => {
         fetch(`${import.meta.env.VITE_API_URL}/feed/${id}`)
           .then(res => res.json())
-          .then(data => setFeed(data))
+          .then(data => {
+            console.log(data)
+            setFeed(data)})
     }, [id])
+    
+    const renderPost = (post: Post) => {
+      console.log(post)
+      switch(post.action) {
+        case 'CREATE':
+          return (
+            <FeedItem post={post} />
+          )
+        default:
+          return null
+      }
+    }
+
     return (
       <div>
         <h1 className="text-4xl font-bold">Feed</h1>
-        {feed ? feed.map(post => <p>{post.name}</p>) : null}
+        {feed ? feed.map((post: Post): ReactNode => renderPost(post)) : null}
       </div>
     )
 }

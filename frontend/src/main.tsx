@@ -19,6 +19,7 @@ import Restaurants from './components/Restaurants.tsx'
 import Hotels from './components/Hotels.tsx'
 import AddAttraction from './pages/AddAttraction.tsx'
 import Profile from './pages/Profile.tsx'
+import TripSettings from './pages/TripSettings.tsx'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -103,6 +104,10 @@ const router = createBrowserRouter([
                 path: '/trips/:id/hotels',
                 element: <Hotels />
               },
+              {
+                path: '/trips/:id/settings',
+                element: <TripSettings />
+              }
             ],
             handle: {
               crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to={`/trips/${crumb.data.id}/feed`}>{crumb.data.name}</Link>
