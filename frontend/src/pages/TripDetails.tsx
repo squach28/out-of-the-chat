@@ -19,7 +19,8 @@ const TripDetails = () => {
     const location = useLocation()
     const navigate = useNavigate()
     const pathsToHideCategories = [
-        'settings'
+        'settings',
+        'addAttraction'
     ]
 
     const splitPath = location.pathname.split('/')
@@ -47,12 +48,16 @@ const TripDetails = () => {
                 {trip ? 
                     <div>
                         <Breadcrumbs data={trip} />
-                        <div className="flex justify-between">
-                            <h1 className="text-4xl font-bold">{trip.name}</h1>
-                            <IconButton color="primary" onClick={navigateToTripSettings}>
-                                <SettingsIcon />
-                            </IconButton>
-                        </div>
+                        {pathsToHideCategories.includes(path) ? 
+                            null 
+                        :
+                            <div className="flex justify-between">
+                                <h1 className="text-4xl font-bold">{trip.name}</h1>
+                                <IconButton color="primary" onClick={navigateToTripSettings}>
+                                    <SettingsIcon />
+                                </IconButton>
+                            </div>
+                        }
                         {pathsToHideCategories.includes(path) ?
                             <Outlet context={trip} /> 
                         :

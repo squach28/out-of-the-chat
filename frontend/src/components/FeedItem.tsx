@@ -11,6 +11,7 @@ type FeedItemProps = {
 
 const FeedItem = (postProps: FeedItemProps) => {
   const [user, setUser] = useState<User | null>(null)
+
   useEffect(() => {
     const auth = getAuth()
     onAuthStateChanged(auth, (user) => {
@@ -19,6 +20,26 @@ const FeedItem = (postProps: FeedItemProps) => {
       }
     })
   }, [])
+
+  const generateDescription = (post: Post) => {
+    switch(post.action) {
+      case 'CREATE':
+        switch(post.type) {
+          case 'TRIP':
+            return `${post.author.uid} created a new trip!`
+          default:
+            return ''
+        }
+      case 'ADD':
+        switch(post.type) {
+          case 'ATTRACTION':
+            return `${post.author.uid} added an attraction: ${post.name}`
+          default:
+            return ''
+        }
+    }
+  }
+
   return (
     <Card className="max-w-lg mx-auto">
       <CardContent>
@@ -29,7 +50,7 @@ const FeedItem = (postProps: FeedItemProps) => {
               {postProps.post.name}
           </Typography>
           <Typography>
-            {postProps.post.author} created a new trip!
+            {generateDescription(postProps.post)}
           </Typography>
       </CardContent>
       <CardActions sx={{ display: "flex" }}>

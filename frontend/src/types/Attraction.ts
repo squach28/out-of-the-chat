@@ -4,6 +4,6 @@ export type Attraction = {
     description: string
     url?: string
     price: number
-    timestamp?: string
+    timestamp?: Date
     createdBy: string
 }

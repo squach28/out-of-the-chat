@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { Post } from "../types/Post"
 import FeedItem from "./FeedItem"
+import { Box } from "@mui/material"
 
 const Feed = () => {
     const [feed, setFeed] = useState<Post[]>([])
@@ -14,23 +15,14 @@ const Feed = () => {
             console.log(data)
             setFeed(data)})
     }, [id])
-    
-    const renderPost = (post: Post) => {
-      console.log(post)
-      switch(post.action) {
-        case 'CREATE':
-          return (
-            <FeedItem post={post} />
-          )
-        default:
-          return null
-      }
-    }
+
 
     return (
       <div>
         <h1 className="text-4xl font-bold">Feed</h1>
-        {feed ? feed.map((post: Post): ReactNode => renderPost(post)) : null}
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 4}}>
+          {feed ? feed.map((post: Post): ReactNode => <FeedItem post={post} />) : null}
+        </Box>
       </div>
     )
 }

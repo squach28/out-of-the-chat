@@ -55,7 +55,7 @@ const EditAttractionModal = (editAttractionModal: EditAttractionModal) => {
         setAttraction(prev => {
             return {
                 ...prev,
-                timestamp: new Date().toISOString()
+                timestamp: new Date()
             }
         })
         fetch(`${import.meta.env.VITE_API_URL}/attractions?tripId=${editAttractionModal.attraction.id}`, {
