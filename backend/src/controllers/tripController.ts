@@ -23,7 +23,7 @@ export const getTripById = async (req: Request, res: Response): Promise<void> =>
 export const getTripByUid = async (req: Request, res: Response): Promise<void> => {
   const uid = req.query.uid
   try {
-    const tripDocs = await admin.firestore().collection(DB_NAME).where('createdBy', '==', uid).get()
+    const tripDocs = await admin.firestore().collection(DB_NAME).where('author.uid', '==', uid).get()
     const trips = tripDocs.docs.map(doc => {
       return doc.data()
     })
