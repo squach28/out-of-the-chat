@@ -65,6 +65,18 @@ export const updateAttractionById = async (req: Request, res: Response): Promise
     await admin.firestore().collection(DB_NAME).doc(tripId).collection('attractions').doc(attractionId).update({
       ...attraction
     })
+    const feedItem: FeedItem = {
+      action: 'UPDATE',
+      type: 'ATTRACTION',
+      name: attraction.name,
+      author: {
+        uid: attraction.createdBy,
+        name: '',
+        photoURL: ''
+      },
+      timestamp: attraction.timestamp
+    }
+    await addToFeed(tripId, feedItem)
     res.status(201).json({ id: attractionId })
   } catch (e) {
     console.log(e)
@@ -76,9 +88,24 @@ export const deleteAttractionById = async (req: Request, res: Response): Promise
   const tripId = req.query.tripId as string
   const { attractionId } = req.params
   try {
-    await admin.firestore().collection(DB_NAME).doc(tripId).collection('attractions').doc(attractionId).delete()
-    console.log('deleted')
-    res.sendStatus(204)
+    const deletedAttraction = await admin.firestore().collection(DB_NAME).doc(tripId).collection('attractions').doc(attractionId).get()
+    const deletedAttractionData = deletedAttraction.data()
+    if (deletedAttractionData !== undefined) {
+      await admin.firestore().collection(DB_NAME).doc(tripId).collection('attractions').doc(attractionId).delete()
+      const feedItem: FeedItem = {
+        action: 'REMOVE',
+        type: 'ATTRACTION',
+        name: deletedAttractionData.name,
+        author: {
+          uid: deletedAttractionData.createdBy,
+          name: '',
+          photoURL: ''
+        },
+        timestamp: new Date()
+      }
+      await addToFeed(tripId, feedItem)
+      res.sendStatus(204)
+    }
   } catch (e) {
     console.log(e)
   }
