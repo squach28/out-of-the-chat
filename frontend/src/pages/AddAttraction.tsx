@@ -22,18 +22,16 @@ const AddAttraction = () => {
 
     const onAddAttractionClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
-        setAttraction(prev => {
-            return {
-                ...prev,
-                timestamp: new Date()
-            }
-        })
+        const attractionToAdd = {
+            ...attraction,
+            timestamp: new Date()
+        }
         fetch(`${import.meta.env.VITE_API_URL}/attractions?tripId=${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(attraction)
+            body: JSON.stringify(attractionToAdd)
         })
             .then(res => res.json())
             .then(() => navigate(`/trips/${id}/attractions`))
