@@ -71,3 +71,15 @@ export const updateAttractionById = async (req: Request, res: Response): Promise
     res.status(500).json('Something went wrong')
   }
 }
+
+export const deleteAttractionById = async (req: Request, res: Response): Promise<void> => {
+  const tripId = req.query.tripId as string
+  const { attractionId } = req.params
+  try {
+    await admin.firestore().collection(DB_NAME).doc(tripId).collection('attractions').doc(attractionId).delete()
+    console.log('deleted')
+    res.sendStatus(204)
+  } catch (e) {
+    console.log(e)
+  }
+}
