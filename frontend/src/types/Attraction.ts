@@ -5,5 +5,9 @@ export type Attraction = {
     url?: string
     price: number
     timestamp?: Date
-    createdBy: string
+    author: {
+        uid: string
+        displayName: string 
+        photoURL: string
+    }
 }

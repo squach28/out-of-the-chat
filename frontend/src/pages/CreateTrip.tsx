@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { TripCreation } from "../types/TripCreation"
 import { Autocomplete, Button, CircularProgress, TextField } from "@mui/material"
 import { useDebounce } from "../hooks/useDebounce"
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
@@ -8,15 +7,20 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import dayjs from "dayjs"
 import { useNavigate } from "react-router-dom"
+import { Trip } from "../types/Trip"
 
 const CreateTripForm = () => {
     const date = new Date().setDate(new Date().getDate() + 7)
-    const [trip, setTrip] = useState<TripCreation>({
+    const [trip, setTrip] = useState<Trip>({
         name: '',
         location: '',
-        startDate: new Date().toISOString(),
-        endDate: new Date(date).toISOString(),
-        createdBy: ''
+        startDate: new Date(),
+        endDate: new Date(date),
+        author: {
+            uid: '',
+            displayName: '',
+            photoURL: ''
+        }
     })
     const [errors, setErrors] = useState({
         name: '',
@@ -40,7 +44,11 @@ const CreateTripForm = () => {
                 setTrip(prev => {
                     return {
                         ...prev,
-                        createdBy: user.uid
+                        author: {
+                            uid: auth.currentUser?.uid ?? '',
+                            displayName: auth.currentUser?.displayName ?? '',
+                            photoURL: auth.currentUser?.photoURL ?? ''
+                        }
                     }
                 })
             }
@@ -124,10 +132,9 @@ const CreateTripForm = () => {
 
     }
 
-    const createTrip = async (tripCreation: TripCreation) => {
+    const createTrip = async (tripCreation: Trip) => {
         try {
             setLoading(true)
-            console.log(tripCreation)
             const res = await fetch(`${import.meta.env.VITE_API_URL}/trips`, {
                 method: 'POST',
                 headers: {
@@ -237,7 +244,7 @@ const CreateTripForm = () => {
                             setTrip(prev => { 
                                 return { 
                                     ...prev, 
-                                    startDate: newValue ? newValue.toISOString() : null
+                                    startDate: newValue ? new Date(newValue.toISOString()) : null
                                 }
                             })
                         }}
@@ -266,7 +273,7 @@ const CreateTripForm = () => {
                             setTrip(prev => { 
                                 return { 
                                     ...prev, 
-                                    endDate: newValue ? newValue.toISOString() : null
+                                    endDate: newValue ? new Date(newValue.toISOString()) : null
                                 }
                             })
                         }}

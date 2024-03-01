@@ -15,7 +15,11 @@ const AddAttraction = () => {
         description: '',
         url: '',
         price: 0,
-        createdBy: auth.currentUser?.uid ?? ''
+        author: {
+            uid: auth.currentUser?.uid ?? '',
+            displayName: auth.currentUser?.displayName ?? '',
+            photoURL: auth.currentUser?.photoURL ?? ''
+        }
     })
     const [checked, setChecked] = useState<boolean>(false)
     const navigate = useNavigate()
