@@ -4,6 +4,7 @@ import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
 import CommentIcon from '@mui/icons-material/Comment'
 import { useEffect, useState } from "react"
 import { User, getAuth, onAuthStateChanged } from "firebase/auth"
+import SendIcon from '@mui/icons-material/Send'
 
 type FeedItemProps = {
     post: Post
@@ -11,6 +12,7 @@ type FeedItemProps = {
 
 const FeedItem = (postProps: FeedItemProps) => {
   const [user, setUser] = useState<User | null>(null)
+  const [comment, setComment] = useState<string>('')
 
   useEffect(() => {
     const auth = getAuth()
@@ -37,11 +39,25 @@ const FeedItem = (postProps: FeedItemProps) => {
           default:
             return ''
         }
+      case 'UPDATE':
+        switch(post.type) {
+          case 'ATTRACTION':
+            return `${post.author.uid} updated an attraction: ${post.name}`
+          default:
+            return ''
+        }
+      case 'REMOVE':
+        switch(post.type) {
+          case 'ATTRACTION':
+            return `${post.author.uid} removed an attraction: ${post.name}`
+          default:
+            return ''
+        }
     }
   }
 
   return (
-    <Card className=" min-w-[32rem] max-w-lg mx-auto">
+    <Card className="md:min-w-[32rem] max-w-lg mx-auto">
       <CardContent>
         <Typography
               variant="h3"
@@ -71,10 +87,18 @@ const FeedItem = (postProps: FeedItemProps) => {
             <TextField
               fullWidth
               size="small"
+              placeholder="Write a comment..."
+              onChange={(e) => setComment(e.target.value)}
+              value={comment}
               InputProps={{
                 startAdornment: <InputAdornment position="start">
                                   <Avatar src={user && user.photoURL ? user.photoURL : ''} sx={{ width: 30, height: 30 }} />
-                                </InputAdornment>
+                                </InputAdornment>,
+                endAdornment: <InputAdornment position="end">
+                                <IconButton size="small" disabled={comment === ''}>
+                                  <SendIcon />
+                                </IconButton>
+                              </InputAdornment>
               }}
             />
       </Box>

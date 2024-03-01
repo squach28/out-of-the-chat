@@ -240,12 +240,16 @@ const Attractions = () => {
 
     const updateAttraction = (attraction: Attraction) => {
         setLoading(true)
+        const updatedAttraction = {
+            ...attraction,
+            timestamp: new Date()
+        }
         fetch(`${import.meta.env.VITE_API_URL}/attractions/${attraction.id}?tripId=${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(attraction)
+            body: JSON.stringify(updatedAttraction)
         })
             .then(res => res.json())
             .then(() => handleClose())

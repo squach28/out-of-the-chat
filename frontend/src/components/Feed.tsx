@@ -20,7 +20,7 @@ const Feed = () => {
     return (
       <div>
         <h1 className="text-4xl font-bold">Feed</h1>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 4}}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 4 }}>
           {feed ? feed.map((post: Post): ReactNode => <FeedItem post={post} />) : null}
         </Box>
       </div>
