@@ -6,7 +6,7 @@ const DB_NAME = 'feed'
 export const getFeedByTripId = async (req: Request, res: Response): Promise<void> => {
   const { tripId } = req.params
   try {
-    const collection = admin.firestore().collection(DB_NAME).doc(tripId).collection('feed')
+    const collection = admin.firestore().collection(DB_NAME).doc(tripId).collection('feed').orderBy('timestamp', 'desc')
     collection.get()
       .then(snapshot => {
         const arr = snapshot.docs.map(doc => {

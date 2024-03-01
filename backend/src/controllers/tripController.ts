@@ -53,7 +53,8 @@ export const createTrip = async (req: Request, res: Response): Promise<void> => 
         uid: createdBy,
         name: '',
         photoURL: ''
-      }
+      },
+      timestamp: new Date()
     }
     await createFeed(tripDoc.id)
     await addToFeed(tripDoc.id, feedItem)

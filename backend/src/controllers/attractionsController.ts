@@ -45,7 +45,7 @@ export const addAttraction = async (req: Request, res: Response): Promise<void> 
           name: '',
           photoURL: ''
         },
-        timestamp: attraction.timestamp
+        timestamp: new Date(attraction.timestamp)
       }
       await addToFeed(tripId, feedItem)
       res.status(200).json('success')
@@ -74,7 +74,7 @@ export const updateAttractionById = async (req: Request, res: Response): Promise
         name: '',
         photoURL: ''
       },
-      timestamp: attraction.timestamp
+      timestamp: new Date(attraction.timestamp)
     }
     await addToFeed(tripId, feedItem)
     res.status(201).json({ id: attractionId })
