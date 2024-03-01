@@ -7,11 +7,12 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import tripRouter from './routes/tripRoutes'
-import userRouter from './routes/userRouter'
+import userRouter from './routes/userRoutes'
 import fileUpload from 'express-fileupload'
 import placesRouter from './routes/placesRoutes'
 import attractionsRouter from './routes/attractionsRoutes'
 import feedRouter from './routes/feedRoutes'
+import restaurantsRouter from './routes/restaurantsRoutes'
 dotenv.config()
 
 const PORT = process.env.PORT ?? 4000
@@ -26,6 +27,7 @@ app.use('/trips', tripRouter)
 app.use('/users', userRouter)
 app.use('/places', placesRouter)
 app.use('/attractions', attractionsRouter)
+app.use('/restaurants', restaurantsRouter)
 app.use('/feed', feedRouter)
 
 app.get('/', (req, res) => {
