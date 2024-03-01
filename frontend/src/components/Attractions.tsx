@@ -244,7 +244,7 @@ const Attractions = () => {
             ...attraction,
             timestamp: new Date()
         }
-        console.log(updatedAttraction)
+
         fetch(`${import.meta.env.VITE_API_URL}/attractions/${attraction.id}?tripId=${id}`, {
             method: 'PUT',
             headers: {

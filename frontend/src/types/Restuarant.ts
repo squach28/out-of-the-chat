@@ -1,6 +1,13 @@
 export type Restaurant = {
-    id: string
+    id: string 
     name: string
-    rating: number
-    
+    description: string
+    url?: string
+    price: number
+    timestamp?: Date
+    author: {
+        uid: string
+        displayName: string 
+        photoURL: string
+    }
 }

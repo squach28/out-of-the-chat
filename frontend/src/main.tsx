@@ -20,6 +20,7 @@ import Hotels from './components/Hotels.tsx'
 import AddAttraction from './pages/AddAttraction.tsx'
 import Profile from './pages/Profile.tsx'
 import TripSettings from './pages/TripSettings.tsx'
+import AddRestaurant from './pages/AddRestaurant.tsx'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -99,6 +100,10 @@ const router = createBrowserRouter([
               {
                 path: '/trips/:id/restaurants',
                 element: <Restaurants />
+              },
+              {
+                path: '/trips/:id/restaurants/addRestaurant',
+                element: <AddRestaurant />
               },
               {
                 path: '/trips/:id/hotels',
