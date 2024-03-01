@@ -160,11 +160,10 @@ const CreateTripForm = () => {
                 return
             }
         }
-        console.log('creating trip')
         createTrip(trip)
             .then((res: { id: string, name: string }) => {
                 const id = res.id
-                navigate(`/trips/${id}`, { replace: true })
+                navigate(`/trips/${id}/feed`, { replace: true })
             })
             .catch(e => {
                 console.log(e)
