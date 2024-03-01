@@ -18,7 +18,7 @@ const Feed = () => {
 
 
     return (
-      <div>
+      <div className="mt-6">
         <h1 className="text-4xl font-bold">Feed</h1>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 4 }}>
           {feed ? feed.map((post: Post): ReactNode => <FeedItem post={post} />) : null}

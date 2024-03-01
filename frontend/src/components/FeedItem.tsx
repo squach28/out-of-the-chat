@@ -28,28 +28,28 @@ const FeedItem = (postProps: FeedItemProps) => {
       case 'CREATE':
         switch(post.type) {
           case 'TRIP':
-            return `${post.author.uid} created a new trip!`
+            return `${post.author.displayName} created a new trip!`
           default:
             return ''
         }
       case 'ADD':
         switch(post.type) {
           case 'ATTRACTION':
-            return `${post.author.uid} added an attraction: ${post.name}`
+            return `${post.author.displayName} added an attraction: ${post.name}`
           default:
             return ''
         }
       case 'UPDATE':
         switch(post.type) {
           case 'ATTRACTION':
-            return `${post.author.uid} updated an attraction: ${post.name}`
+            return `${post.author.displayName} updated an attraction: ${post.name}`
           default:
             return ''
         }
       case 'REMOVE':
         switch(post.type) {
           case 'ATTRACTION':
-            return `${post.author.uid} removed an attraction: ${post.name}`
+            return `${post.author.displayName} removed an attraction: ${post.name}`
           default:
             return ''
         }
@@ -57,15 +57,24 @@ const FeedItem = (postProps: FeedItemProps) => {
   }
 
   return (
-    <Card className="md:min-w-[32rem] max-w-lg mx-auto">
+    <Card className="min-w-full md:min-w-[32rem] max-w-lg mx-auto p-1">
       <CardContent>
-        <Typography
-              variant="h3"
-              component="h2"
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1}}>
+          <Avatar 
+            src={postProps.post.author.photoURL}
+          />
+          <Typography
+                variant="subtitle1"
+                component="p"
+            >
+                {postProps.post.author.displayName}
+            </Typography>
+        </Box>
+          <Typography
+            variant="body1"
+            component="p"
+            sx={{ marginTop: 2}}
           >
-              {postProps.post.name}
-          </Typography>
-          <Typography>
             {generateDescription(postProps.post)}
           </Typography>
       </CardContent>
