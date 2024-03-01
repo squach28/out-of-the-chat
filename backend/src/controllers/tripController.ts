@@ -43,12 +43,8 @@ export const createTrip = async (req: Request, res: Response): Promise<void> => 
       location,
       startDate,
       endDate,
-      createdBy,
-      attractions: [],
-      hotels: [],
-      restaurants: []
+      createdBy
     })
-
     const feedItem: FeedItem = {
       action: 'CREATE',
       type: 'TRIP',
