@@ -1,7 +1,6 @@
-import { Link, useOutletContext, useParams } from "react-router-dom"
-import { Trip } from "../types/Trip"
+import { Link, useParams } from "react-router-dom"
 import { Attraction } from "../types/Attraction"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Box, Button, Card, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, Radio, RadioGroup, TextField, Typography } from "@mui/material"
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -67,17 +66,12 @@ const AttractionCard = (attractionCardProps: AttractionCardProps) => {
 
 type EditAttractionFormProps = {
     prevAttraction: Attraction
+    handleClose: () => void
+    updateAttraction: (attraction: Attraction) => void
 }
 
 const EditAttractionForm = (editAttractionFormProps: EditAttractionFormProps) => {
-    const [attraction, setAttraction] = useState<Attraction>({
-        id: editAttractionFormProps.prevAttraction.id,
-        name: editAttractionFormProps.prevAttraction.name,
-        description: editAttractionFormProps.prevAttraction.description,
-        url: editAttractionFormProps.prevAttraction.url,
-        price: editAttractionFormProps.prevAttraction.price,
-        createdBy: editAttractionFormProps.prevAttraction.createdBy
-    })
+    const [attraction, setAttraction] = useState<Attraction>(editAttractionFormProps.prevAttraction)
     const [checked, setChecked] = useState<boolean>(false)
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
         const targetName = e.target.name
@@ -118,85 +112,104 @@ const EditAttractionForm = (editAttractionFormProps: EditAttractionFormProps) =>
         }
     }
 
-
     return(
-        <form className="min-w-96 flex mt-4 p-2 flex-col gap-4">
-        <TextField 
-            id="name"
-            name="name"
-            label="Name"
-            type="text"
-            required
-            onChange={onInputChange}
-            value={attraction.name}
-        />
-        <TextField 
-            id="description"
-            name="description"
-            label="Description"
-            type="text"
-            onChange={onInputChange}
-            value={attraction.description}
-            multiline
-            rows={2}
-            error={attraction.description.length >= 150}
-            helperText={`${attraction.description.length} / 150 characters used`}
-        />
-        <TextField 
-            id="url"
-            name="url"
-            label="URL"
-            type="url"
-            onChange={onInputChange}
-            value={attraction.url}
-        />
-        <FormControl>
-            <FormLabel>
-                Price
-            </FormLabel>
-            <RadioGroup
-                value={attraction.price}
-                onChange={onRadioChange}
-            >
-                <FormControlLabel
-                    name="free"
-                    checked={!checked}
-                    value={0}
-                    control={<Radio />}
-                    label="Free"
-                />
-                <FormControlLabel
-                    name="notFree"
-                    checked={checked}
-                    control={<Radio />}
-                    label={
-                        <TextField 
-                            id="price" 
-                            name="price" 
-                            type="number" 
-                            onChange={onInputChange}
-                            value={attraction.price}
-                            disabled={!checked}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <AttachMoneyOutlined />
-                                    </InputAdornment>
-                                )
-                            }}
-                        />
-                    }
-                />   
-            </RadioGroup>
-        </FormControl>
-        </form>
+        <Dialog
+            open={Boolean(editAttractionFormProps.prevAttraction)}
+            onClose={editAttractionFormProps.handleClose}
+            sx={{ minWidth: 400 }}
+        >
+            <DialogTitle>Edit Attraction</DialogTitle>
+            <DialogContent>
+            <form className="min-w-96 flex mt-4 p-2 flex-col gap-4">
+            <TextField 
+                id="name"
+                name="name"
+                label="Name"
+                type="text"
+                required
+                onChange={onInputChange}
+                value={attraction.name}
+            />
+            <TextField 
+                id="description"
+                name="description"
+                label="Description"
+                type="text"
+                onChange={onInputChange}
+                value={attraction.description}
+                multiline
+                rows={2}
+                error={attraction.description.length >= 150}
+                helperText={`${attraction.description.length} / 150 characters used`}
+            />
+            <TextField 
+                id="url"
+                name="url"
+                label="URL"
+                type="url"
+                onChange={onInputChange}
+                value={attraction.url}
+            />
+            <FormControl>
+                <FormLabel>
+                    Price
+                </FormLabel>
+                <RadioGroup
+                    value={attraction.price}
+                    onChange={onRadioChange}
+                >
+                    <FormControlLabel
+                        name="free"
+                        checked={!checked}
+                        value={0}
+                        control={<Radio />}
+                        label="Free"
+                    />
+                    <FormControlLabel
+                        name="notFree"
+                        checked={checked}
+                        control={<Radio />}
+                        label={
+                            <TextField 
+                                id="price" 
+                                name="price" 
+                                type="number" 
+                                onChange={onInputChange}
+                                value={attraction.price}
+                                disabled={!checked}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <AttachMoneyOutlined />
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
+                        }
+                    />   
+                    </RadioGroup>
+                </FormControl>
+            </form>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={editAttractionFormProps.handleClose}>Cancel</Button>
+                <Button onClick={() => editAttractionFormProps.updateAttraction(attraction)}>Save Changes</Button>
+            </DialogActions>
+        </Dialog>
+
     )
 }
 
 const Attractions = () => {
     const { id } = useParams()
-    const trip: Trip = useOutletContext()
+    const [attractions, setAttractions] = useState<Attraction[]>([])
     const [editAttraction, setEditAttraction] = useState<Attraction | null>(null)
+
+    useEffect(() => {
+        fetch(`${import.meta.env.VITE_API_URL}/attractions/${id}`)
+            .then(res => res.json())
+            .then(data => setAttractions(data))
+    }, [id])
 
     const toggleEditModal = (attraction?: Attraction) => {
         if(attraction) {
@@ -209,6 +222,21 @@ const Attractions = () => {
     const handleClose = () => {
         setEditAttraction(null)
     }
+
+    const updateAttraction = (attraction: Attraction) => {
+        fetch(`${import.meta.env.VITE_API_URL}/attractions/${attraction.id}?tripId=${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(attraction)
+        })
+            .then(res => res.json())
+            .then(() => handleClose())
+
+    }
+    
+
     return (
         <div className={`w-full min-h-screen relative`}>
             <div className={`flex justify-between items-center mt-6 ${editAttraction !== null ? 'filter blur-sm opacity-55 ' : ''}`}>
@@ -223,23 +251,10 @@ const Attractions = () => {
                     </Button>                
             </div>
             <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-2 ${editAttraction !== null ? 'filter blur-sm' : ''}`}>
-                {trip.attractions.map(attraction => <AttractionCard key={attraction.id} attraction={attraction} toggleEditModal={toggleEditModal} />)}
+                {attractions.map(attraction => <AttractionCard key={attraction.id} attraction={attraction} toggleEditModal={toggleEditModal} />)}
             </div>
             {editAttraction ? 
-                <Dialog
-                    open={Boolean(editAttraction)}
-                    onClose={handleClose}
-                    sx={{ minWidth: 400 }}
-                >
-                    <DialogTitle>Edit Attraction</DialogTitle>
-                    <DialogContent>
-                        <EditAttractionForm prevAttraction={editAttraction} />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancel</Button>
-                        <Button>Save Changes</Button>
-                    </DialogActions>
-                </Dialog>
+                <EditAttractionForm prevAttraction={editAttraction} handleClose={handleClose} updateAttraction={updateAttraction} />
             :
                 null
             }
