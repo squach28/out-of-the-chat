@@ -106,7 +106,10 @@ const router = createBrowserRouter([
               },
               {
                 path: '/trips/:id/settings',
-                element: <TripSettings />
+                element: <TripSettings />,
+                handle: { 
+                  crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to={`/trips/${crumb.data.id}/settings`}>Settings</Link> 
+                }
               }
             ],
             handle: {
