@@ -3,7 +3,11 @@ interface Attraction {
   name: string
   description: string
   price: number
-  createdBy: string
+  author: {
+    uid: string
+    displayName: string
+    photoURL: string
+  }
   timestamp: Date
 }
 

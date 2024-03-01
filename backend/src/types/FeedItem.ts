@@ -5,7 +5,7 @@ export interface FeedItem {
   type: 'TRIP' | 'ATTRACTION' | 'HOTEL' | 'RESTAURANT' | 'ITINERARY'
   author: {
     uid: string
-    name: string
+    displayName: string
     photoURL: string
   }
   timestamp?: Date

@@ -41,9 +41,9 @@ export const addAttraction = async (req: Request, res: Response): Promise<void> 
         type: 'ATTRACTION',
         name: attraction.name,
         author: {
-          uid: attraction.createdBy,
-          name: '',
-          photoURL: ''
+          uid: attraction.author.uid,
+          displayName: attraction.author.displayName,
+          photoURL: attraction.author.photoURL
         },
         timestamp: new Date(attraction.timestamp)
       }
@@ -70,9 +70,9 @@ export const updateAttractionById = async (req: Request, res: Response): Promise
       type: 'ATTRACTION',
       name: attraction.name,
       author: {
-        uid: attraction.createdBy,
-        name: '',
-        photoURL: ''
+        uid: attraction.author.uid,
+        displayName: attraction.author.displayName,
+        photoURL: attraction.author.photoURL
       },
       timestamp: new Date(attraction.timestamp)
     }
@@ -97,9 +97,9 @@ export const deleteAttractionById = async (req: Request, res: Response): Promise
         type: 'ATTRACTION',
         name: deletedAttractionData.name,
         author: {
-          uid: deletedAttractionData.createdBy,
-          name: '',
-          photoURL: ''
+          uid: deletedAttractionData.author.uid,
+          displayName: deletedAttractionData.author.displayName,
+          photoURL: deletedAttractionData.author.photoURL
         },
         timestamp: new Date()
       }

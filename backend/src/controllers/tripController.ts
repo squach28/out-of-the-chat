@@ -33,7 +33,7 @@ export const getTripByUid = async (req: Request, res: Response): Promise<void> =
 }
 
 export const createTrip = async (req: Request, res: Response): Promise<void> => {
-  const { name, location, startDate, endDate, createdBy } = req.body
+  const { name, location, startDate, endDate, author } = req.body
   try {
     const tripsCollection = admin.firestore().collection(DB_NAME)
     const tripDoc = tripsCollection.doc()
@@ -43,16 +43,16 @@ export const createTrip = async (req: Request, res: Response): Promise<void> => 
       location,
       startDate,
       endDate,
-      createdBy
+      author
     })
     const feedItem: FeedItem = {
       action: 'CREATE',
       type: 'TRIP',
       name,
       author: {
-        uid: createdBy,
-        name: '',
-        photoURL: ''
+        uid: author.uid,
+        displayName: author.displayName,
+        photoURL: author.photoURL
       },
       timestamp: new Date()
     }
