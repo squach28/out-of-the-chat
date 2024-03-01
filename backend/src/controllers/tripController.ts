@@ -4,6 +4,7 @@ import { addToFeed, createFeed } from '../utils/feedUtil'
 import type { FeedItem } from '../types/FeedItem'
 
 const DB_NAME = 'trips'
+const FEED_DB_NAME = 'feed'
 
 export const getTripById = async (req: Request, res: Response): Promise<void> => {
   const tripId = req.params.id
@@ -59,6 +60,17 @@ export const createTrip = async (req: Request, res: Response): Promise<void> => 
     await createFeed(tripDoc.id)
     await addToFeed(tripDoc.id, feedItem)
     res.status(201).json({ id: tripDoc.id, name })
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const deleteTripById = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params
+  try {
+    await admin.firestore().collection(DB_NAME).doc(id).delete()
+    await admin.firestore().collection(FEED_DB_NAME).doc(id).delete()
+    res.sendStatus(204)
   } catch (e) {
     console.log(e)
   }
