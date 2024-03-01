@@ -11,6 +11,7 @@ import { AttachMoneyOutlined } from "@mui/icons-material"
 type AttractionCardProps = {
     attraction: Attraction
     toggleEditModal: (attraction: Attraction) => void
+    toggleDeleteModal: (attraction: Attraction) => void
 }
 
 const AttractionCard = (attractionCardProps: AttractionCardProps) => {
@@ -23,7 +24,7 @@ const AttractionCard = (attractionCardProps: AttractionCardProps) => {
                         <IconButton onClick={() => attractionCardProps.toggleEditModal(attractionCardProps.attraction)}>
                             <EditIcon />
                         </IconButton>
-                        <IconButton>
+                        <IconButton onClick={() => attractionCardProps.toggleDeleteModal(attractionCardProps.attraction)}>
                             <DeleteIcon />
                         </IconButton>
                     </Box>
@@ -204,12 +205,14 @@ const Attractions = () => {
     const { id } = useParams()
     const [attractions, setAttractions] = useState<Attraction[]>([])
     const [editAttraction, setEditAttraction] = useState<Attraction | null>(null)
+    const [deleteAttraction, setDeleteAttraction] = useState<Attraction | null>(null)
+    const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
         fetch(`${import.meta.env.VITE_API_URL}/attractions/${id}`)
             .then(res => res.json())
             .then(data => setAttractions(data))
-    }, [id])
+    }, [id, loading])
 
     const toggleEditModal = (attraction?: Attraction) => {
         if(attraction) {
@@ -218,12 +221,25 @@ const Attractions = () => {
             setEditAttraction(null)
         }
     }
+
+    const toggleDeleteModal = (attraction?: Attraction) => {
+        if(attraction) {
+            setDeleteAttraction(attraction)
+        } else {
+            setDeleteAttraction(null)
+        }
+    }
     
     const handleClose = () => {
         setEditAttraction(null)
     }
 
+    const handleDeleteAttractionClose = () => {
+        setDeleteAttraction(null)
+    }
+
     const updateAttraction = (attraction: Attraction) => {
+        setLoading(true)
         fetch(`${import.meta.env.VITE_API_URL}/attractions/${attraction.id}?tripId=${id}`, {
             method: 'PUT',
             headers: {
@@ -233,7 +249,28 @@ const Attractions = () => {
         })
             .then(res => res.json())
             .then(() => handleClose())
+            .finally(() => {
+                setLoading(false)
+            })
+    }
 
+    const handleDeleteAttraction = (attraction: Attraction) => {
+        setLoading(true)
+        fetch(`${import.meta.env.VITE_API_URL}/attractions/${attraction.id}?tripId=${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(() => {
+                handleDeleteAttractionClose()
+            })
+            .catch(e => {
+                console.log(e)
+            })
+            .finally(() => {
+                setLoading(false)
+            })
     }
     
 
@@ -251,10 +288,26 @@ const Attractions = () => {
                     </Button>                
             </div>
             <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-2 ${editAttraction !== null ? 'filter blur-sm' : ''}`}>
-                {attractions.map(attraction => <AttractionCard key={attraction.id} attraction={attraction} toggleEditModal={toggleEditModal} />)}
+                {attractions.map(attraction => <AttractionCard key={attraction.id} attraction={attraction} toggleEditModal={toggleEditModal} toggleDeleteModal={toggleDeleteModal} />)}
             </div>
             {editAttraction ? 
                 <EditAttractionForm prevAttraction={editAttraction} handleClose={handleClose} updateAttraction={updateAttraction} />
+            :
+                null
+            }
+            {
+                deleteAttraction ? 
+                <Dialog
+                    open={Boolean(deleteAttraction)}
+                    onClose={handleDeleteAttractionClose}
+                >
+                    <DialogTitle>Delete Attraction</DialogTitle>
+                    <DialogContent>Are you sure you want to delete {deleteAttraction.name}?</DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleDeleteAttractionClose}>No</Button>
+                        <Button onClick={() => handleDeleteAttraction(deleteAttraction)}>Yes</Button>
+                    </DialogActions>
+                </Dialog>
             :
                 null
             }
