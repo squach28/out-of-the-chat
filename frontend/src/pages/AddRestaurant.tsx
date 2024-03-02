@@ -1,4 +1,4 @@
-import { Avatar, Box, CircularProgress, List, ListItemAvatar, ListItemButton, ListItemText, Rating, TextField } from "@mui/material"
+import { Avatar, Box, CircularProgress, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Rating, TextField } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useDebounce } from "../hooks/useDebounce"
 import { Business, BusinessResponse } from "../types/Business"
@@ -11,7 +11,9 @@ type RestaurantItemProps = {
 
 const RestaurantItem = (restaurantItemProps: RestaurantItemProps) => {
     return(
-        <ListItemButton onClick={() => restaurantItemProps.onListItemClick(restaurantItemProps.restaurant)}>
+        <ListItem
+            className="w-full flex justify-start gap-2 p-2 hover:cursor-pointer border shadow-sm hover:shadow-md rounded-md"
+            onClick={() => restaurantItemProps.onListItemClick(restaurantItemProps.restaurant)}>
             <ListItemAvatar>
                 <Avatar
                     variant="square"
@@ -20,19 +22,19 @@ const RestaurantItem = (restaurantItemProps: RestaurantItemProps) => {
                 />
             </ListItemAvatar>
             <ListItemText
+                className=""
                 primary={restaurantItemProps.restaurant.name}
                 secondary=
-                <Rating
+                {<Rating
                     readOnly
                     size="small"
                     precision={0.5}
                     value={restaurantItemProps.restaurant.rating}
-                />
-            >
+                />}
                 
+            >
             </ListItemText>
-
-        </ListItemButton>
+        </ListItem>
     )
 }
 
@@ -96,14 +98,11 @@ const AddRestaurant = () => {
                 onChange={handleSearchChange}
             />  
             {restaurants.length > 0 && !loading ? 
-                <Box sx={{
-                    display: "flex"
-                }}>
-                    <List sx={{
-                        maxHeight: 500,
-                        overflowY: "scroll"
+                <Box className="w-full flex flex-col-reverse md:flex-row">
+                    <List 
+                        className="w-full flex gap-4 overflow-x-scroll md:flex-col md:max-w-md md:max-h-[500px] md:overflow-y-scroll md:overflow-x-hidden"
 
-                    }}>
+                    >
                         {restaurants.map(restaurant => (
                         <RestaurantItem key={restaurant.id} restaurant={restaurant} onListItemClick={onListItemClick} />
                     )
