@@ -103,7 +103,10 @@ const router = createBrowserRouter([
               },
               {
                 path: '/trips/:id/restaurants/addRestaurant',
-                element: <AddRestaurant />
+                element: <AddRestaurant />,
+                handle: {
+                  crumb: (crumb: Crumb) => <Link className={`text-blue-800 ${crumb.last ? 'underline' : ''}`} to={`/trips/attractions/addAttraction`}>Add Restaurant</Link>
+                }
               },
               {
                 path: '/trips/:id/hotels',

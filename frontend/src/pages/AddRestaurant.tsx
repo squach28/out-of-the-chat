@@ -1,15 +1,17 @@
-import { Avatar, CircularProgress, Divider, List, ListItem, ListItemAvatar, ListItemText, Rating, TextField, Typography } from "@mui/material"
+import { Avatar, Box, CircularProgress, List, ListItemAvatar, ListItemButton, ListItemText, Rating, TextField } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useDebounce } from "../hooks/useDebounce"
 import { Business, BusinessResponse } from "../types/Business"
+import Map from "../components/Map"
 
 type RestaurantItemProps = {
     restaurant: Business
+    onListItemClick: (business: Business) => void
 }
 
 const RestaurantItem = (restaurantItemProps: RestaurantItemProps) => {
     return(
-        <ListItem>
+        <ListItemButton onClick={() => restaurantItemProps.onListItemClick(restaurantItemProps.restaurant)}>
             <ListItemAvatar>
                 <Avatar
                     variant="square"
@@ -30,7 +32,7 @@ const RestaurantItem = (restaurantItemProps: RestaurantItemProps) => {
                 
             </ListItemText>
 
-        </ListItem>
+        </ListItemButton>
     )
 }
 
@@ -38,6 +40,7 @@ const AddRestaurant = () => {
     const [search, setSearch] = useState<string>('')
     const [restaurants, setRestaurants] = useState<Business[]>([])
     const [loading, setLoading] = useState<boolean>(false)
+    const [currRestaurant, setCurrRestaurant] = useState<Business | null>(null)
     const debouncedSearch = useDebounce(search)
 
     useEffect(() => {
@@ -77,8 +80,15 @@ const AddRestaurant = () => {
         setSearch(e.target.value)
     }
 
+    const onListItemClick = (business: Business) => {
+        setCurrRestaurant(business)
+    }
+
+    console.log(currRestaurant)
+
     return (
-        <div>
+        <div className="mt-6">
+            <h1 className="text-4xl font-bold my-4">Add Restaurant</h1>
             <TextField 
                 fullWidth
                 label="Location"
@@ -86,12 +96,21 @@ const AddRestaurant = () => {
                 onChange={handleSearchChange}
             />  
             {restaurants.length > 0 && !loading ? 
-                <List>
-                    {restaurants.map(restaurant => (
-                    <RestaurantItem key={restaurant.id} restaurant={restaurant} />
-                )
-                )}
-                </List>
+                <Box sx={{
+                    display: "flex"
+                }}>
+                    <List sx={{
+                        maxHeight: 500,
+                        overflowY: "scroll"
+
+                    }}>
+                        {restaurants.map(restaurant => (
+                        <RestaurantItem key={restaurant.id} restaurant={restaurant} onListItemClick={onListItemClick} />
+                    )
+                    )}
+                    </List>
+                    <Map query={`place=${currRestaurant?.location.address1 || search}`}/>
+                </Box>
 
             :
                 loading ? 
@@ -99,10 +118,6 @@ const AddRestaurant = () => {
                 :
                         null
             }
-            <Divider />
-            <Typography>
-                Or add one
-            </Typography>
         </div>
     )
 }

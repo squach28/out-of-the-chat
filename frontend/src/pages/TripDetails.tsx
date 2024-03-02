@@ -20,7 +20,8 @@ const TripDetails = () => {
     const navigate = useNavigate()
     const pathsToHideCategories = [
         'settings',
-        'addAttraction'
+        'addAttraction',
+        'addRestaurant'
     ]
 
     const splitPath = location.pathname.split('/')
