@@ -1,5 +1,5 @@
 export interface BusinessResponse {
-    businesses: Business[]
+    businesses: Business[] | undefined
     total: number
     region: Region
   }

@@ -1,4 +1,4 @@
-import { Avatar, Box, CircularProgress, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Rating, TextField } from "@mui/material"
+import { Avatar, Box, CircularProgress, List, ListItem, ListItemAvatar, ListItemText, Rating, TextField } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useDebounce } from "../hooks/useDebounce"
 import { Business, BusinessResponse } from "../types/Business"
@@ -60,10 +60,20 @@ const AddRestaurant = () => {
         const fetchRestaurants = () => {
             setLoading(true)
             fetchRestaurantsByLocation(debouncedSearch)
-                .then(data => {
+                .then((data: BusinessResponse | null) => {
                     if(data !== null) {
-                        setRestaurants(data.businesses)
+                        if(data.businesses === undefined) {
+                            setRestaurants([])
+                        } else {
+                            setRestaurants(data.businesses)
+                        }
+                    } else {
+                        setRestaurants([])
                     }
+                })
+                .catch(e => {
+                    console.log(e)
+                    setRestaurants([])
                 })
                 .finally(() => {
                     setLoading(false)
