@@ -8,9 +8,9 @@ const Map = (mapProps: MapProps) => {
       <iframe
         title="google map"
         src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyAmVfKCETyY9jtb-pgS4jR4ShR-2JPJyrc&q=${mapProps.query}`}
+        className="border"
         width="100%"
         height="500"
-        style={{ border: 0 }}
         allowFullScreen={false}
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"

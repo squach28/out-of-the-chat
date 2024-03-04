@@ -1,4 +1,4 @@
-import { Avatar, Box, CircularProgress, List, ListItem, ListItemAvatar, ListItemText, Rating, TextField } from "@mui/material"
+import { Avatar, Box, CircularProgress, List, ListItem, ListItemAvatar, ListItemText, Rating, TextField, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useDebounce } from "../hooks/useDebounce"
 import { Business, BusinessResponse } from "../types/Business"
@@ -7,12 +7,13 @@ import Map from "../components/Map"
 type RestaurantItemProps = {
     restaurant: Business
     onListItemClick: (business: Business) => void
+    index: number
 }
 
 const RestaurantItem = (restaurantItemProps: RestaurantItemProps) => {
     return(
         <ListItem
-            className="w-full flex justify-start gap-2 p-2 hover:cursor-pointer border shadow-sm hover:shadow-md rounded-md"
+            className="w-full flex flex-col justify-start gap-2 p-2 md:flex-row hover:cursor-pointer border shadow-sm hover:shadow-md rounded-md"
             onClick={() => restaurantItemProps.onListItemClick(restaurantItemProps.restaurant)}>
             <ListItemAvatar>
                 <Avatar
@@ -23,7 +24,22 @@ const RestaurantItem = (restaurantItemProps: RestaurantItemProps) => {
             </ListItemAvatar>
             <ListItemText
                 className=""
-                primary={restaurantItemProps.restaurant.name}
+                primary={
+                    <Box>
+                        <Typography
+                            variant="body1"
+                            component="span"
+                        >
+                            {restaurantItemProps.index + 1}. 
+                        </Typography>
+                        <Typography
+                            variant="body1"
+                            component="span"
+                        >
+                            {restaurantItemProps.restaurant.name}
+                        </Typography>
+                    </Box>
+                }
                 secondary=
                 {<Rating
                     readOnly
@@ -96,8 +112,6 @@ const AddRestaurant = () => {
         setCurrRestaurant(business)
     }
 
-    console.log(currRestaurant)
-
     return (
         <div className="mt-6">
             <h1 className="text-4xl font-bold my-4">Add Restaurant</h1>
@@ -113,8 +127,8 @@ const AddRestaurant = () => {
                         className="w-full flex gap-4 overflow-x-scroll md:flex-col md:max-w-md md:max-h-[500px] md:overflow-y-scroll md:overflow-x-hidden"
 
                     >
-                        {restaurants.map(restaurant => (
-                        <RestaurantItem key={restaurant.id} restaurant={restaurant} onListItemClick={onListItemClick} />
+                        {restaurants.map((restaurant, index) => (
+                        <RestaurantItem key={restaurant.id} restaurant={restaurant} onListItemClick={onListItemClick} index={index} />
                     )
                     )}
                     </List>
