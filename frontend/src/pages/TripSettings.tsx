@@ -1,15 +1,41 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from "@mui/material"
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputAdornment, List, ListItem, TextField, Typography } from "@mui/material"
 import { useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import GroupAddIcon from '@mui/icons-material/GroupAdd'
+import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import validator from "validator"
 
 const TripSettings = () => {
     const [openDelete, setOpenDelete] = useState<boolean>(false)
+    const [openAddPeople, setOpenAddPeople] = useState<boolean>(false)
+    const [email, setEmail] = useState<string>('')
+    const [emailError, setEmailError] = useState<string>('')
+    const [addPeople, setAddPeople] = useState<string[]>([])
     const { id } = useParams()
     const navigate = useNavigate()
+    
+    const handleAddPeopleClose = () => {
+        setOpenAddPeople(false)
+    }
 
     const handleDeleteClose = () => {
         setOpenDelete(false)
+    }
+
+    const addPerson = (email: string) => {
+        if(!validator.isEmail(email)) {
+            setEmailError('Not a valid email')
+        } else {
+            setAddPeople([...addPeople, email])
+            setEmailError('')
+            setEmail('')
+        }
+    }
+
+    const handleOnKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if(e.code === 'Enter') {
+            addPerson(email)
+        }
     }
 
     const deleteTrip = (tripId: string) => {
@@ -34,6 +60,7 @@ const TripSettings = () => {
                 </Typography>
                 <Button
                     variant="contained"
+                    onClick={() => setOpenAddPeople(true)}
                 >
                     <Box sx={{ display: "flex", gap: 1 }}>
                         <Typography>
@@ -43,6 +70,46 @@ const TripSettings = () => {
                     </Box>
                 </Button>
             </Box>
+            <Dialog
+                open={openAddPeople}
+                onClose={handleAddPeopleClose}
+            >
+                <DialogTitle>Add People</DialogTitle>
+                <DialogContent>
+                    <TextField 
+                        fullWidth
+                        id="email"
+                        name="email"
+                        label="Email"
+                        variant="standard"
+                        onChange={(e) => setEmail(e.target.value)}
+                        onKeyDown={handleOnKeyDown}
+                        value={email}
+                        InputProps={{
+                            endAdornment: 
+                                <InputAdornment position='end'>
+                                    <IconButton onClick={() => addPerson(email)}>
+                                        <PersonAddIcon />
+                                    </IconButton>
+                                </InputAdornment> 
+                        }}
+                        error={emailError !== ''}
+                        helperText={emailError}
+                    />
+                    <List>
+                        {addPeople.map(email => (
+                            <ListItem key={email}>
+                                {email}
+                            </ListItem>
+                        ))}
+                    </List>
+                    <DialogActions>
+                        <Button onClick={handleAddPeopleClose}>Cancel</Button>
+                        <Button onClick={handleAddPeopleClose}>Add</Button>
+                    </DialogActions>
+                </DialogContent>
+            </Dialog>
+
             <Dialog
                 open={openDelete}
                 onClose={handleDeleteClose}
